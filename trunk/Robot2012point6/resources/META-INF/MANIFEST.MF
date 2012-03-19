@@ -1,4 +1,4 @@
-MIDlet-Name: Robot2012point5
+MIDlet-Name: Robot2012point6
 MIDlet-Version: 1.0.0
 MIDlet-Vendor: FIRST
 MIDlet-1: RobotMain, , com.robostangs.RobotMain
