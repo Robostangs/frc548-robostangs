@@ -79,7 +79,6 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        //TODO: change A button to not reset encoders
         //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer() + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
         //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder());
         /*
@@ -111,7 +110,6 @@ public class RobotMain extends IterativeRobot {
          * Driver manual rpm speeds
          */
         if(xboxDriver.aButton()){           //Front fender rpm
-            drive.resetEncoders();
             manipulatorRpmControl = false;
             shoot.setRpm(Constants.SHOOTER_FRONT_FENDER_RPM);
         }else if(xboxDriver.bButton()){     //Side fender rpm
@@ -137,13 +135,11 @@ public class RobotMain extends IterativeRobot {
             //Right Trigger Pressed
             air.setGear(Constants.LOW_SPEED);
         }else{
-            //TODO: autoshift
             if(arm.getAngle()<-40){
                 air.setGear(!Constants.LOW_SPEED);
             }else{
                 air.setGear(Constants.LOW_SPEED);
             }
-            //air.setGear(Constants.HIGH_GEAR);
         }
         
         /*
