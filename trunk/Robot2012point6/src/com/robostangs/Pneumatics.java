@@ -57,8 +57,6 @@ public class Pneumatics {
 
     /*
      * Set the drive train gear
-     * High: true
-     * Low: false
      */
     public void setGear(boolean x){
         gearCylinder.set(x);
