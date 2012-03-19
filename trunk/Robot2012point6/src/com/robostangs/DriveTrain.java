@@ -13,7 +13,6 @@ public class DriveTrain {
     private PIDController camPid;
     private DriveMotors output;
     private Gyro gyro;
-    private double encoderVal = 0.0018555094;
     public Encoder leftEncoder;
     public Encoder rightEncoder;
     public Camera axisCam;
@@ -27,8 +26,8 @@ public class DriveTrain {
         rightEncoder = new Encoder(Constants.DRIVE_RIGHT_ENCODER_1, Constants.DRIVE_RIGHT_ENCODER_2);
 
         //TODO: get for each wheel
-        leftEncoder.setDistancePerPulse(encoderVal);
-        rightEncoder.setDistancePerPulse(encoderVal);
+        leftEncoder.setDistancePerPulse(Constants.LEFT_DISTANCE_PER_TICK);
+        rightEncoder.setDistancePerPulse(Constants.RIGHT_DISTANCE_PER_TICK);
         
         leftEncoder.start();
         rightEncoder.start();
