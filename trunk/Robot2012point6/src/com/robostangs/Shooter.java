@@ -60,7 +60,7 @@ public class Shooter
      * Sets the conveyor forward if rpms are correct, otherwise reverses 
      */
     public boolean conveyorDispense(){
-        if(Math.abs(getRpm() - targetRpm) > 70){
+        if(Math.abs(getAverageRpm() - targetRpm) > 70){
             setConveyorSpeed(-1);
             return(false);
         }else{
@@ -160,11 +160,10 @@ public class Shooter
     /*
      * Return the average shooter wheel rpm.
      */
-    public double getRpm(){
+    public double getAverageRpm(){
         double x = 0;
         try {
-            //TODO: Fix
-            x = topMotor.getSpeed();//(topMotor.getSpeed() + bottomMotor.getSpeed()) /2;
+            x = (topMotor.getSpeed() + bottomMotor.getSpeed()) /2;
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
