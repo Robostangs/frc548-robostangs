@@ -54,10 +54,10 @@ public class DriveTrain {
         if(Math.abs(rightStick) < .2){
             rightStick = 0;
         }
-         //If turning, y=x^2;
+         //If turning, y=x^2, retain sign;
         if((leftStick < -.3 && rightStick > .3) || (leftStick > .3 && rightStick < -.3)){
-            rightStick = rightStick*rightStick;
-            leftStick = leftStick*leftStick;
+            rightStick = rightStick*rightStick * (rightStick / Math.abs(rightStick));
+            leftStick = leftStick*leftStick * (leftStick / Math.abs(leftStick));
         }
         drive(leftStick, rightStick);
     }
