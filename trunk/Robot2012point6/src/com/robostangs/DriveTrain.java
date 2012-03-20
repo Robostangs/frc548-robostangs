@@ -20,7 +20,10 @@ public class DriveTrain {
     public DriveTrain(){
         
         axisCam = new Camera();
+        gyro = new Gyro(Constants.GYRO_POS);
         output = new DriveMotors();
+        
+        
         
         leftEncoder = new Encoder(Constants.DRIVE_LEFT_ENCODER_1, Constants.DRIVE_LEFT_ENCODER_2);
         rightEncoder = new Encoder(Constants.DRIVE_RIGHT_ENCODER_1, Constants.DRIVE_RIGHT_ENCODER_2);
@@ -35,10 +38,12 @@ public class DriveTrain {
          * Pid controller used to turn the robot toward a target when
          * we are tracking.  Turned off otherwise.
          */
-        camPid = new PIDController(Constants.DKp, Constants.DKi, Constants.DKd, axisCam, output);
+        //camPid = new PIDController(Constants.DKp, Constants.DKi, Constants.DKd, axisCam, output);
+        camPid = new PIDController(Constants.DKp, Constants.DKi, Constants.DKd, gyro, output);
         camPid.setOutputRange(-.22, .22);      //Allow range of turing motion.
-        camPid.setInputRange(0, 640);
-        camPid.setTolerance(5.0);
+        //camPid.setInputRange(0, 640);
+        camPid.setContinuous();
+        camPid.setTolerance(2.0);
         camPid.disable();
     }
     
@@ -48,6 +53,11 @@ public class DriveTrain {
         } 
         if(Math.abs(rightStick) < .2){
             rightStick = 0;
+        }
+         //If turning, y=x^2;
+        if((leftStick < -.3 && rightStick > .3) || (leftStick > .3 && rightStick < -.3)){
+            rightStick = rightStick*rightStick;
+            leftStick = leftStick*leftStick;
         }
         drive(leftStick, rightStick);
     }
@@ -60,6 +70,8 @@ public class DriveTrain {
         if(camPid.isEnable()){
             camPid.disable();      //Turn off pid, manuall control
         }
+        
+       
         output.set(left,left,right,right);
     }
     
@@ -92,8 +104,9 @@ public class DriveTrain {
      * Will only seek a target if we are off by more than 20 pixels
      */
     
-    public boolean setPosition(double position)
+    public void setPosition(double position)
     {
+        /*
         if(Timer.getFPGATimestamp() - axisCam.lastImageTime > .3){
             System.out.println("image too old");
             stop();
@@ -107,7 +120,9 @@ public class DriveTrain {
             camPid.setSetpoint(position);
             camPid.enable();
             return false;
-        }
+        }*/
+        camPid.setSetpoint(position);
+        camPid.enable();
     }
     
     /*

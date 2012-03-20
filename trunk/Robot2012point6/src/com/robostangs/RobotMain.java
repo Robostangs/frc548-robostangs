@@ -264,7 +264,8 @@ public class RobotMain extends IterativeRobot {
          * rbumper sets distance to rpm and attempts to center.
          */
         if(xboxDriver.lBumper()){
-            seekingTarget = true;try {
+            seekingTarget = true;
+            try {
                 drive.axisCam.getImage();
             } catch (AxisCameraException ex) {
                 ex.printStackTrace();
@@ -273,15 +274,23 @@ public class RobotMain extends IterativeRobot {
             }
             drive.driveXbox(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
         }else if(xboxDriver.rBumper()){
-            seekingTarget = true;
-            try {
-                drive.axisCam.getImage();
-                drive.setPosition(drive.axisCam.getResolution().width / 2);   //half the image
-            } catch (AxisCameraException ex) {
-                ex.printStackTrace();
-            } catch (NIVisionException ex) {
-                ex.printStackTrace();
+            if(!seekingTarget){
+                seekingTarget = true;
+                try {
+                    drive.axisCam.getImage();
+                } catch (AxisCameraException ex) {
+                    ex.printStackTrace();
+                } catch (NIVisionException ex) {
+                    ex.printStackTrace();
+                }
             }
+            
+            if(drive.onTarget()){
+                drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
+            }else{
+                drive.setPosition(drive.axisCam.getHeading());
+            }
+            
         }else{
             //We are not rectangle tracking, drive normally
             seekingTarget = false;
