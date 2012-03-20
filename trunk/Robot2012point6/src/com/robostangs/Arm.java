@@ -14,7 +14,7 @@ public class Arm
         apot = new ArmPot();
         pid = new PIDController(Constants.ARM_TOP_AKp, Constants.ARM_TOP_AKi, Constants.ARM_TOP_AKd, apot, output);
         pid.setOutputRange(-.7, .6);     //Do not decrease as quickly (gas strut)
-        //TODO: set arm input range
+        pid.setInputRange(Constants.ARM_POT_MIN, Constants.ARM_POT_MAX);
         pid.disable();
     }
     
@@ -58,7 +58,7 @@ public class Arm
      */
     public void setPosition(double value)
     {
-        if(value <= 605 && value >= 180){
+        if(value <= Constants.ARM_POT_MAX && value >= Constants.ARM_POT_MIN){
             pid.setSetpoint(value);
             pid.enable();
         }else{

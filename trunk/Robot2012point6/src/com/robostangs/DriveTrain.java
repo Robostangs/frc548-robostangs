@@ -25,7 +25,6 @@ public class DriveTrain {
         leftEncoder = new Encoder(Constants.DRIVE_LEFT_ENCODER_1, Constants.DRIVE_LEFT_ENCODER_2);
         rightEncoder = new Encoder(Constants.DRIVE_RIGHT_ENCODER_1, Constants.DRIVE_RIGHT_ENCODER_2);
 
-        //TODO: get for each wheel
         leftEncoder.setDistancePerPulse(Constants.LEFT_DISTANCE_PER_TICK);
         rightEncoder.setDistancePerPulse(Constants.RIGHT_DISTANCE_PER_TICK);
         

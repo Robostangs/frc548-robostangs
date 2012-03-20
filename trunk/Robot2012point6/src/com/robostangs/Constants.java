@@ -26,6 +26,8 @@ public class Constants {
         public static final int ARM_TOP_COMP = 650;
         public static final int ARM_MIDDLE_COMP = 615;
         public static final int ARM_ZEROPOSITION_COMP = 219;
+        public static final int ARM_POT_MAX = 605;
+        public static final int ARM_POT_MIN = 180;
         //TODO: Check angles
         public static final int ARM_MAX_ANGLE = 60;
         public static final int ARM_MIN_ANGLE = -57;
