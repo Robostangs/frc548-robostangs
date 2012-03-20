@@ -1,11 +1,11 @@
 package com.robostangs;
 
 import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.*;
+import com.sun.squawk.util.MathUtils;
 
 /**
  *
@@ -77,23 +77,48 @@ public class Camera implements PIDSource{
         }
     }
     
-    //Return the center of mass of the largest object detected
-    public int[] highestCenterOfMass(){
-        if(beginCalc){
-        return new int[]{lowestReport.center_mass_x,lowestReport.center_mass_y};
-        }else{
-            return new int[]{0,0};
-        }
+    /*
+     * Return the x coordinate of the center of the target.
+     */
+    public int getTargetCenterX(){
+        return lowestReport.center_mass_x;
     }
     
-    public double getRectangleArea(){
+    /*
+     * Return the y coordinate of the center of the target.
+     */
+    public int getTargetCenterY(){
+        return lowestReport.center_mass_y;
+    }
+    
+    /*
+     * Return the widht of the target, in pixels
+     */
+    public int getTargetWidth(){
+        return lowestReport.boundingRectWidth;
+    }
+    
+    /*
+     * Return the height of the target, in pixels
+     */
+    public int getTargetHeight(){
+        return lowestReport.boundingRectHeight;
+    }
+    
+    /*
+     * Return the area of the target, in pixels
+     */
+    public double getTargetArea(){
         return lowestReport.particleArea;
     }
     
+    /*
+     * Return center X pixel, adjusting for camera not in center of robot.
+     */
     public int getXCenter(){
         if(Constants.USE_CAMERA){
-            if(reports.length > 0 && beginCalc){//return center_mass_x
-                int z = lowestReport.center_mass_x + (int)((.28*lowestReport.boundingRectHeight) / .44);
+            if(reports.length > 0 && beginCalc){
+                int z = getTargetCenterX() + (int)((.28*getTargetHeight()) / .44);
                 return z;
             }
             else{
@@ -104,7 +129,10 @@ public class Camera implements PIDSource{
         }
     }
     
-    //Distance to the target, meters
+
+    /*
+     * Return the distance to the center of the target, in meters.
+     */
     public double getDistance(){
         if(Constants.USE_CAMERA){
             if(beginCalc){
@@ -131,6 +159,19 @@ public class Camera implements PIDSource{
         }
     }
     
+    /*
+     * Return the required angle to turn to be centered toward the target
+     * in degrees
+     */
+    public double getHeading(){
+        double d = getDistance();
+        double x = (getXCenter() * .4572)/(getTargetHeight());
+        return MathUtils.atan(x/d) * 57.2957795;    //to degrees
+    }
+    
+    /*
+     * Return the current resolution setting of the camera.
+     */
     public AxisCamera.ResolutionT getResolution(){
         if(Constants.USE_CAMERA){
             return camera.getResolution();
@@ -139,6 +180,9 @@ public class Camera implements PIDSource{
         }
     }
     
+    /*
+     * Return the center pixel, for use in pid.
+     */
     public double pidGet() {
         int x = getXCenter();
         return x;
