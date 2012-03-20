@@ -10,7 +10,7 @@ public class Shooter
 {
     private Victor conveyor;
     private Relay ingestor;
-    private CANJaguar bottomMotor; //, topMotor;
+    private CANJaguar bottomMotor, topMotor;
     private double rpmOffset = 0;
     private double targetRpm = 0;    
     
@@ -19,7 +19,7 @@ public class Shooter
         conveyor = new Victor(Constants.SHOOTER_CONVEYOR_VIC);
         ingestor = new Relay(Constants.SHOOTER_INGESTOR_REL);
         try {
-            //topMotor = new CANJaguar(Constants.SHOOTER_JAG_TOP_POS);
+            topMotor = new CANJaguar(Constants.SHOOTER_JAG_TOP_POS);
             bottomMotor = new CANJaguar(Constants.SHOOTER_JAG_BOTTOM_POS);   
         } catch (CANTimeoutException ex) {
             System.out.println("\n\n\n\n****CAN exception at shooter class.");
@@ -27,19 +27,17 @@ public class Shooter
         }
       
         try {
-            /*
             topMotor.changeControlMode(CANJaguar.ControlMode.kSpeed);
             topMotor.setPID(Constants.SKp, Constants.SKi, Constants.SKd);
             topMotor.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
             topMotor.configEncoderCodesPerRev(360);
-            * */
            
             bottomMotor.changeControlMode(CANJaguar.ControlMode.kSpeed);
             bottomMotor.setPID(Constants.SKp, Constants.SKi, Constants.SKd);
             bottomMotor.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
             bottomMotor.configEncoderCodesPerRev(360);
             
-            //topMotor.enableControl();
+            topMotor.enableControl();
             bottomMotor.enableControl();
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
@@ -88,7 +86,7 @@ public class Shooter
     
     public void fenderShot(){
         try{ 
-            //topMotor.setX(0);
+            topMotor.setX(0);
             bottomMotor.setX(3100);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
@@ -101,7 +99,7 @@ public class Shooter
     public void setRpm(double rpm){
         targetRpm = rpm+rpmOffset;
         try{ 
-            //topMotor.setX(targetRpm);
+            topMotor.setX(targetRpm);
             bottomMotor.setX(targetRpm);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
@@ -127,7 +125,7 @@ public class Shooter
      */
     public void disablePid(){
         try {
-            //topMotor.disableControl();
+            topMotor.disableControl();
             bottomMotor.disableControl();
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
@@ -139,12 +137,11 @@ public class Shooter
      */
     public double getTopRpm(){
         double x = 0;
-        /*
         try {
             x = (topMotor.getSpeed());
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
-        }*/
+        }
         return x;
     }
     
@@ -166,12 +163,11 @@ public class Shooter
      */
     public double getAverageRpm(){
         double x = 0;
-        /*
         try {
             x = (topMotor.getSpeed() + bottomMotor.getSpeed()) /2;
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
-        }*/
+        }
         return x;
     }
     
@@ -223,7 +219,7 @@ public class Shooter
     public void stop()
     {
         try {
-            //topMotor.setX(0.0);
+            topMotor.setX(0.0);
             bottomMotor.setX(0.0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
@@ -234,13 +230,12 @@ public class Shooter
      * Output the shooter wheel rpm to the log file
      */
     public void writeInfo(){
-        /*
         try {
             //time,topRate,bottomRate
             Log.getInstance().write(Timer.getFPGATimestamp() + " , " + topMotor.getSpeed() + " , " + bottomMotor.getSpeed());
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
-        }*/
+        }
 
     }
     
