@@ -34,7 +34,7 @@ public class CustomDashboard {
                 lowDashData.addCluster();
                 {
                     for (int i = 1; i <= 8; i++) {
-                        lowDashData.addFloat((float) AnalogModule.getInstance(2).getAverageVoltage(i));
+                        lowDashData.addFloat((float) AnalogModule.getInstance(1).getAverageVoltage(i));
                     }
                 }
                 lowDashData.finalizeCluster();
@@ -68,7 +68,7 @@ public class CustomDashboard {
                 {
                     lowDashData.addCluster();
                     {
-                        int module = 2;
+                        int module = 1;
                         lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
                         lowDashData.addByte(DigitalModule.getInstance(module).getRelayReverse());
                         lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());

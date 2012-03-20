@@ -92,7 +92,7 @@ public class RobotMain extends IterativeRobot {
         voltage = DriverStation.getInstance().getBatteryVoltage();
         
         //update dashboard
-        //TODO: attempt to remove module 2 stuff
+        //TODO: attempt to remove module 2 stuff; possibly fixed
         //TODO: fix true to on target
         dash.updateDashboard(true, Double.toString((int)drive.axisCam.getDistance()), Double.toString((int)shoot.getTargetRpm()), Double.toString((int)shoot.getAverageRpm()), Double.toString((int)shoot.getRpmOffset()), Double.toString(arm.getAngle()));
             
