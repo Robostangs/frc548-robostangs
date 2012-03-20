@@ -40,6 +40,7 @@ public class RobotMain extends IterativeRobot {
     private boolean manipulatorRpmControl = true;
     private double voltage = 0;
     private int currentManipButton = 3; //0-3, arm pid config
+    private double angleOffset = 0;     //used for centering toward target
     
     public void robotInit() {
         air = new Pneumatics();
@@ -80,7 +81,7 @@ public class RobotMain extends IterativeRobot {
      */
     public void teleopPeriodic() {
         //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer() + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
-        //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder());
+        System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder());
         /*
          * Check the air pressure, turn on compressor if nessisary.
          */
@@ -112,6 +113,7 @@ public class RobotMain extends IterativeRobot {
         if(xboxDriver.aButton()){           //Front fender rpm
             manipulatorRpmControl = false;
             shoot.setRpm(Constants.SHOOTER_FRONT_FENDER_RPM);
+            drive.resetEncoders();//TODO: Remove
         }else if(xboxDriver.bButton()){     //Side fender rpm
             manipulatorRpmControl = false;
             shoot.setRpm(Constants.SHOOTER_SIDE_FENDER_RPM);
@@ -275,6 +277,7 @@ public class RobotMain extends IterativeRobot {
             drive.driveXbox(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
         }else if(xboxDriver.rBumper()){
             if(!seekingTarget){
+                angleOffset = drive.getGyro();
                 seekingTarget = true;
                 try {
                     drive.axisCam.getImage();
@@ -288,7 +291,7 @@ public class RobotMain extends IterativeRobot {
             if(drive.onTarget()){
                 drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
             }else{
-                drive.setPosition(drive.axisCam.getHeading());
+                drive.setPosition(drive.axisCam.getHeading() + angleOffset);
             }
             
         }else{
