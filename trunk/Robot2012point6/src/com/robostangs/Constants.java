@@ -17,20 +17,22 @@ public class Constants {
      */
         public static final float ARM_POWER_COEFFICIENT = .75f;
         //TODO: Check bottom and comment positions with angle
-        public static final int ARM_BOTTOM = 374;
-        public static final int ARM_TOP = 598;
-        public static final int ARM_MIDDLE = 555;
-        public static final int ARM_ZEROPOSITION = 182;
+        //public static final int ARM_BOTTOM = 374;
+        //public static final int ARM_TOP = 598;
+        //public static final int ARM_MIDDLE = 555;
+        //public static final int ARM_ZEROPOSITION = 182;
         
-        public static final int ARM_BOTTOM_COMP = 338;
-        public static final int ARM_TOP_COMP = 650;
-        public static final int ARM_MIDDLE_COMP = 615;
-        public static final int ARM_ZEROPOSITION_COMP = 219;
-        public static final int ARM_POT_MAX = 605;
-        public static final int ARM_POT_MIN = 180;
-        //TODO: Check angles
         public static final int ARM_MAX_ANGLE = 60;
         public static final int ARM_MIN_ANGLE = -57;
+        public static final int ARM_BOTTOM = 338;
+        public static final int ARM_TOP = 650;
+        public static final int ARM_MIDDLE = 615;
+        public static final int ARM_ZEROPOSITION = 219;
+        public static final int ARM_POT_MAX = 651;
+        public static final int ARM_POT_MIN = 218;
+
+        /*
+      
         public static final double ARM_ZERO_AKp = 0.01;
         public static final double ARM_ZERO_AKi = 0.0001;
         public static final double ARM_ZERO_AKd = 0;
@@ -43,7 +45,9 @@ public class Constants {
         public static final double ARM_BOTTOM_AKp = 0.01;
         public static final double ARM_BOTTOM_AKi = 0;
         public static final double ARM_BOTTOM_AKd = 0;
-        /*PID constants, competetion
+        * */
+       
+        //PID constants, competetion
         public static final double ARM_ZERO_AKp = 0.023;
         public static final double ARM_ZERO_AKi = 0.000015;
         public static final double ARM_ZERO_AKd = 0.007;
@@ -56,8 +60,7 @@ public class Constants {
         public static final double ARM_BOTTOM_AKp = 0.0175;
         public static final double ARM_BOTTOM_AKi = 0.002;
         public static final double ARM_BOTTOM_AKd = 0.002;
-        * 
-        */
+
         public static final int ARM_POT_POS = 2;
         public static final int ARM_JAG_A_POS = 3;
         public static final int ARM_JAG_B_POS = 9;
