@@ -30,6 +30,7 @@ public class Autonomous2{
     private Arm ar;
     private Pneumatics pn;
     private double speed = 0.5;
+    private double initGyro;
     
     public Autonomous2(DriveTrain d, Shooter s, Arm a, Pneumatics p){
         dt = d;
@@ -45,17 +46,19 @@ public class Autonomous2{
         if(mode < 0 || mode > 4){
             mode = 0;
         }
-        System.out.println("mode: " + mode); 
+        System.out.println("mode: " + mode);
+        initGyro = dt.getGyro();
     }
     //make sure it's driving straight
     public void check(double sLeft, double sRight){
-        if((Math.abs(dt.getRightCount()) - Math.abs(dt.getLeftCount()*.95)) >= 25){
-            sRight = sRight*.90;
-            sLeft = sLeft * 1.05;
+        //if((Math.abs(dt.getRightEncoder()) - Math.abs(dt.getLeftEncoder()*.95)) >= .032){
+        if(dt.getGyro() - initGyro < -0.5){
+            sRight = sRight*.88;
+            sLeft = sLeft * 1.06;
             dt.drive(sLeft, sRight);
-        }else if ((Math.abs(dt.getRightCount()) - Math.abs(dt.getLeftCount()*.95)) <= -25){
+        }else if (dt.getGyro() - initGyro > 0.5 ){
             sLeft = sLeft*.90;
-            sRight = sRight*1.05;
+            sRight = sRight*1.01;
             dt.drive(sLeft, sRight);
         }else{
             dt.drive(sLeft, sRight);
@@ -136,29 +139,14 @@ public class Autonomous2{
                         case 0: //Drive forward
                             pn.setGear(Constants.LOW_SPEED);
                             check(.35,.35);
-                            if((Math.abs(dt.getLeftEncoder()) >= .1)){
+                            if((Math.abs(dt.getLeftEncoder()) >= 1.45)){
                                 dm.set(0,0,0,0);
                                 dt.resetEncoders();
                                 step++;
                                 break;
                             }
-                            break;
-                        case 1:
-                            step++;
-                            break;
-                        case 2:
-                             //TODO: write distance, rpms
-                           pn.setGear(Constants.LOW_SPEED);
-                           check(.5, .5);
-                           if(Math.abs(dt.getLeftEncoder()) >= 1.55){
-                                dm.set(0,0,0,0);
-                                dt.resetEncoders();
-                                sh.fenderShot();
-                                step++;
-                                break;
-                            }
-                            break;
-                        case 3: //prepare
+                            break;                        
+                        case 1: //prepare
                              //TODO: Check rpm
                             sh.fenderShot();
                             sh.setConveyorSpeed(0);
@@ -166,13 +154,13 @@ public class Autonomous2{
                             Timer.delay(2.5);
                             step++;
                             break;
-                        case 4:     //Shoot
+                        case 2:     //Shoot
                             sh.fenderShot();
                             sh.setConveyorSpeed(1);
                             Timer.delay(3);
                             step++;
                             break;
-                        case 5:     //Reset
+                        case 3:     //Reset
                             sh.setRpm(0);
                             ar.setPosition(Constants.ARM_ZEROPOSITION);
                             sh.setConveyorSpeed(0);

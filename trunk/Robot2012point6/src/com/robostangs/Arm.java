@@ -22,7 +22,7 @@ public class Arm
      * Return the angle of the arm (degrees)
      */
     public double getAngle(){
-        double angle = (apot.getPotentiometer() - 380) / 3.978;
+        double angle = (apot.getPotentiometer() - 432) / 4.066;
         return angle;
     }
     

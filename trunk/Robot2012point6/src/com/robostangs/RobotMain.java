@@ -70,6 +70,7 @@ public class RobotMain extends IterativeRobot {
     public void disabledInit(){
         arm.stop();
         drive.stop();
+        auton.init();
     }
     
     public void teleopInit(){
@@ -81,13 +82,13 @@ public class RobotMain extends IterativeRobot {
      */
     public void teleopPeriodic() {
         //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer() + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
-        System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder());
+        System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
         /*
          * Check the air pressure, turn on compressor if nessisary.
          */
         air.checkPressure();
         
-        Log.getInstance().write(Timer.getFPGATimestamp() + " , " + drive.getRightCount() + " , " + drive.getLeftCount() + " , " + drive.getLeftEncoder() + " , " + drive.getRightEncoder());
+        //Log.getInstance().write(Timer.getFPGATimestamp() + " , " + drive.getRightCount() + " , " + drive.getLeftCount() + " , " + drive.getLeftEncoder() + " , " + drive.getRightEncoder());
         
         //get the battery voltage
         voltage = DriverStation.getInstance().getBatteryVoltage();

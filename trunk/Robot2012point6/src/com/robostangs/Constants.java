@@ -22,12 +22,12 @@ public class Constants {
         //public static final int ARM_MIDDLE = 555;
         //public static final int ARM_ZEROPOSITION = 182;
         
-        public static final int ARM_MAX_ANGLE = 60;
+        public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
-        public static final int ARM_BOTTOM = 338;
+        public static final int ARM_BOTTOM = 432;
         public static final int ARM_TOP = 650;
         public static final int ARM_MIDDLE = 615;
-        public static final int ARM_ZEROPOSITION = 219;
+        public static final int ARM_ZEROPOSITION = 230;
         public static final int ARM_POT_MAX = 651;
         public static final int ARM_POT_MIN = 218;
 
@@ -50,16 +50,16 @@ public class Constants {
         //PID constants, competetion
         public static final double ARM_ZERO_AKp = 0.023;
         public static final double ARM_ZERO_AKi = 0.000015;
-        public static final double ARM_ZERO_AKd = 0.007;
+        public static final double ARM_ZERO_AKd = 0.015;
         public static final double ARM_TOP_AKp = 0.016;
         public static final double ARM_TOP_AKi = 0.000018;
-        public static final double ARM_TOP_AKd = 0.014;
-        public static final double ARM_MIDDLE_AKp = 0.01;
+        public static final double ARM_TOP_AKd = 0.023;
+        public static final double ARM_MIDDLE_AKp = 0.015;
         public static final double ARM_MIDDLE_AKi = 0.001;
-        public static final double ARM_MIDDLE_AKd = 0.001;
-        public static final double ARM_BOTTOM_AKp = 0.0175;
+        public static final double ARM_MIDDLE_AKd = 0.01;
+        public static final double ARM_BOTTOM_AKp = 0.0165;
         public static final double ARM_BOTTOM_AKi = 0.002;
-        public static final double ARM_BOTTOM_AKd = 0.002;
+        public static final double ARM_BOTTOM_AKd = 0.003;
 
         public static final int ARM_POT_POS = 2;
         public static final int ARM_JAG_A_POS = 3;
@@ -91,7 +91,7 @@ public class Constants {
     /*
      * Sensors
      */
-        public static final int GYRO_POS = 0;
+        public static final int GYRO_POS = 1;
         public static final int ACCELERATIONX_CONSTANT = 0;
         public static final int ACCELERATIONY_CONSTANT = 0;
 
@@ -102,10 +102,9 @@ public class Constants {
         public static final int DRIVE_LEFT_ENCODER_2 = 2;
         public static final int DRIVE_RIGHT_ENCODER_1 = 3;
         public static final int DRIVE_RIGHT_ENCODER_2 = 4;        
-        public static final double AVG_DISTANCE_PER_TICK = 0.0018555094;
         //TODO: actually get for each wheel
-        public static final double LEFT_DISTANCE_PER_TICK = 0.0018555094;
-        public static final double RIGHT_DISTANCE_PER_TICK = 0.0018555094;
+        public static final double LEFT_DISTANCE_PER_TICK = -0.001829;
+        public static final double RIGHT_DISTANCE_PER_TICK = -0.001289;
         public static final int DRIVE_JAG_1_POS = 7;        //left drive train motor
         public static final int DRIVE_JAG_2_POS = 8;        //left drive train motor
         public static final int DRIVE_JAG_3_POS = 5;        //right drive train motor
