@@ -24,7 +24,6 @@ public class DriveTrain {
         output = new DriveMotors();
         
         
-        
         leftEncoder = new Encoder(Constants.DRIVE_LEFT_ENCODER_1, Constants.DRIVE_LEFT_ENCODER_2);
         rightEncoder = new Encoder(Constants.DRIVE_RIGHT_ENCODER_1, Constants.DRIVE_RIGHT_ENCODER_2);
 
@@ -40,10 +39,10 @@ public class DriveTrain {
          */
         //camPid = new PIDController(Constants.DKp, Constants.DKi, Constants.DKd, axisCam, output);
         camPid = new PIDController(Constants.DKp, Constants.DKi, Constants.DKd, gyro, output);
-        camPid.setOutputRange(-.22, .22);      //Allow range of turing motion.
+        camPid.setOutputRange(-.5, .5);      //Allow range of turing motion.
         //camPid.setInputRange(0, 640);
-        camPid.setContinuous();
-        camPid.setTolerance(2.0);
+        camPid.setContinuous(false);
+        camPid.setTolerance(10.0);
         camPid.disable();
     }
     
@@ -121,6 +120,7 @@ public class DriveTrain {
             camPid.enable();
             return false;
         }*/
+        System.out.println("PositiontoGo: " + position + " current: " + gyro.pidGet()) ;
         camPid.setSetpoint(position);
         camPid.enable();
     }
@@ -206,6 +206,10 @@ public class DriveTrain {
      * According to pid, are we centered with the square.
      */
     public boolean onTarget(){
-        return camPid.onTarget();
+        if(Math.abs(gyro.getAngle() - camPid.getSetpoint()) < 1){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

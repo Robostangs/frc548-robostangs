@@ -24,12 +24,12 @@ public class Constants {
         
         public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
-        public static final int ARM_BOTTOM = 432;
-        public static final int ARM_TOP = 650;
-        public static final int ARM_MIDDLE = 615;
-        public static final int ARM_ZEROPOSITION = 230;
-        public static final int ARM_POT_MAX = 651;
-        public static final int ARM_POT_MIN = 218;
+        public static final int ARM_BOTTOM = 574;
+        public static final int ARM_TOP = 773;
+        public static final int ARM_MIDDLE = 745;
+        public static final int ARM_ZEROPOSITION = 355;
+        public static final int ARM_POT_MAX = 775;
+        public static final int ARM_POT_MIN = 352;
 
         /*
       
@@ -52,11 +52,11 @@ public class Constants {
         public static final double ARM_ZERO_AKi = 0.000015;
         public static final double ARM_ZERO_AKd = 0.015;
         public static final double ARM_TOP_AKp = 0.016;
-        public static final double ARM_TOP_AKi = 0.000018;
+        public static final double ARM_TOP_AKi = 0.00001;
         public static final double ARM_TOP_AKd = 0.023;
         public static final double ARM_MIDDLE_AKp = 0.015;
         public static final double ARM_MIDDLE_AKi = 0.001;
-        public static final double ARM_MIDDLE_AKd = 0.01;
+        public static final double ARM_MIDDLE_AKd = 0.015;
         public static final double ARM_BOTTOM_AKp = 0.0165;
         public static final double ARM_BOTTOM_AKi = 0.002;
         public static final double ARM_BOTTOM_AKd = 0.003;
@@ -110,9 +110,9 @@ public class Constants {
         public static final int DRIVE_JAG_3_POS = 5;        //right drive train motor
         public static final int DRIVE_JAG_4_POS = 6;        //right drive train motor
         //PID constants
-        public static final double DKp = 0.00016;
-        public static final double DKi = 0.00010;
-        public static final double DKd = 0;
+        public static final double DKp = 0.07;
+        public static final double DKi = 0;
+        public static final double DKd = 0.03;
     
     /*
      * Joysticks

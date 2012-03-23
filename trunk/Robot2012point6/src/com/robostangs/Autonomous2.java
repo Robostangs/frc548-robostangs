@@ -49,9 +49,11 @@ public class Autonomous2{
         System.out.println("mode: " + mode);
         initGyro = dt.getGyro();
     }
-    //make sure it's driving straight
+
+    /*
+     * Attempt to drive straight by using the gyro.
+     */
     public void check(double sLeft, double sRight){
-        //if((Math.abs(dt.getRightEncoder()) - Math.abs(dt.getLeftEncoder()*.95)) >= .032){
         if(dt.getGyro() - initGyro < -0.5){
             sRight = sRight*.88;
             sLeft = sLeft * 1.06;
@@ -65,6 +67,9 @@ public class Autonomous2{
         }
     }
     
+    /*
+     * Get the autonomous mode from file on the cRio.
+     */
     public String readMode(){
         String sMode = "";
         try{
@@ -95,18 +100,18 @@ public class Autonomous2{
                 case 0:
                     switch(step){
                         case 0:
-                            sh.setRpm(Constants.SHOOTER_FRONT_KEY_RPM);
+                            sh.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
                             step++;
                             break;
                         case 1:
                             ar.setPosition(Constants.ARM_TOP);
                             Timer.delay(8);
-                            sh.setRpm(Constants.SHOOTER_FRONT_KEY_RPM);
+                            sh.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
                             step++;
                             break;
                         case 2:
                             sh.setConveyorSpeed(1);
-                            sh.setRpm(Constants.SHOOTER_FRONT_KEY_RPM);
+                            sh.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
                             Timer.delay(1);
                             step++;
                             break;
@@ -122,7 +127,7 @@ public class Autonomous2{
                             break;
                         case 5: 
                             sh.setConveyorSpeed(0);
-                            sh.setRpm(0);
+                            sh.setRpmBoth(0);
                             ar.setPosition(Constants.ARM_ZEROPOSITION);
                             Timer.delay(4);
                             break;
@@ -147,11 +152,10 @@ public class Autonomous2{
                             }
                             break;                        
                         case 1: //prepare
-                             //TODO: Check rpm
                             sh.fenderShot();
                             sh.setConveyorSpeed(0);
                             ar.setPosition(Constants.ARM_TOP);
-                            Timer.delay(2.5);
+                            Timer.delay(3.25);
                             step++;
                             break;
                         case 2:     //Shoot
@@ -161,10 +165,12 @@ public class Autonomous2{
                             step++;
                             break;
                         case 3:     //Reset
-                            sh.setRpm(0);
+                            sh.setTopRpm(0);
+                            sh.setBottomRpm(0);
                             ar.setPosition(Constants.ARM_ZEROPOSITION);
                             sh.setConveyorSpeed(0);
-                            break;                            
+                            break;    
+                            
                     }
                     break;
                  /*
@@ -208,7 +214,6 @@ public class Autonomous2{
                             }
                             break;
                         case 4: //prepare
-                             //TODO: Check rpm
                             sh.fenderShot();
                             sh.setConveyorSpeed(0);
                             ar.setPosition(Constants.ARM_TOP);
@@ -222,7 +227,7 @@ public class Autonomous2{
                             step++;
                             break;
                         case 6:     //Reset
-                            sh.setRpm(0);
+                            sh.setRpmBoth(0);
                             ar.setPosition(Constants.ARM_ZEROPOSITION);
                             sh.setConveyorSpeed(0);
                             break;                            
@@ -234,36 +239,36 @@ public class Autonomous2{
                 case 3:
                     switch(step){
                         case 0:
-                            sh.setRpm(Constants.SHOOTER_BACK_KEY_RPM+150);
+                            sh.setRpmBackspin(Constants.SHOOTER_BACK_KEY_RPM);
                             step++;
                             break;
                         case 1:
-                            sh.setRpm(Constants.SHOOTER_BACK_KEY_RPM+150);                            
+                            sh.setRpmBackspin(Constants.SHOOTER_BACK_KEY_RPM);                            
                             ar.setPosition(Constants.ARM_TOP);
                             Timer.delay(8);
                             step++;
                             break;
                         case 2:
-                            sh.setRpm(Constants.SHOOTER_BACK_KEY_RPM+150);
+                            sh.setRpmBackspin(Constants.SHOOTER_BACK_KEY_RPM);
                             sh.setConveyorSpeed(1);
                             Timer.delay(.75);
                             step++;
                             break;
                         case 3:
-                            sh.setRpm(Constants.SHOOTER_BACK_KEY_RPM+150);
+                            sh.setRpmBackspin(Constants.SHOOTER_BACK_KEY_RPM);
                             sh.setConveyorSpeed(-1);
                             Timer.delay(1);
                             step++;
                             break;
                         case 4:
-                            sh.setRpm(Constants.SHOOTER_BACK_KEY_RPM+150);                            
+                            sh.setRpmBackspin(Constants.SHOOTER_BACK_KEY_RPM+150);                            
                             sh.setConveyorSpeed(1);
                             Timer.delay(1.5);
                             step++;
                             break;
                         case 5: 
                             sh.setConveyorSpeed(0);
-                            sh.setRpm(0);
+                            sh.setRpmBoth(0);
                             ar.setPosition(Constants.ARM_ZEROPOSITION);
                             Timer.delay(4);
                             break;

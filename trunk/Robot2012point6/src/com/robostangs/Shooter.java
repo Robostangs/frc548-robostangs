@@ -84,6 +84,10 @@ public class Shooter
         ingestor.set(Relay.Value.kOn);
     }    
     
+    /*
+     * Used to shoot from the fender.
+     * Sets bottom wheel to 3100 rpm and top to 0, for backspin.
+     */
     public void fenderShot(){
         try{ 
             topMotor.setX(0);
@@ -96,12 +100,25 @@ public class Shooter
     /*
      * Using jaguar pid, set the rpm of the shooter wheels.
      */
-    public void setRpm(double rpm){
+    public void setRpmBackspin(double rpm){
         targetRpm = rpm+rpmOffset;
         try{ 
             topMotor.setX(targetRpm);
-            bottomMotor.setX(targetRpm);
+            bottomMotor.setX(3100);
         } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    /*
+     * Set the top wheel only, bottom wheel to max for backspin
+     */
+    public void setRpmBoth(double rpm){
+        targetRpm = rpm+rpmOffset;
+        try{
+            topMotor.setX(targetRpm);
+            bottomMotor.setX(targetRpm);
+        }catch(CANTimeoutException ex){
             ex.printStackTrace();
         }
     }
@@ -132,6 +149,20 @@ public class Shooter
         }
     }
     
+    public void setTopRpm(double value){
+        try {
+            bottomMotor.setX(value);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void setBottomRpm(double value){
+        try {
+            bottomMotor.setX(value);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+    }
     /*
      * Return the rpm of the top shooter wheel.
      */
@@ -182,6 +213,9 @@ public class Shooter
     {   
         double d = distance;
         double rpm = 0;
+        d/=100;
+        rpm = -12.581*d*d*d*d + 219.61*d*d*d -1198*d*d +2675.3*d -2109.8;
+        /*
         if(voltage < 11.5){    
             //Very low battery or not working
             rpm = (.0000000753798)*(d*d*d*d) - (.0000812944)*(d*d*d) + (.0282062)*(d*d) - (1.06457)*d + 593.939;
@@ -195,9 +229,9 @@ public class Shooter
             //voltage sensor not working
             rpm = (.0000000753798)*(d*d*d*d) - (.0000812944)*(d*d*d) + (.0282062)*(d*d) - (1.06457)*d + 593.939;
 
-        }
+        }*/
         targetRpm = rpm;
-        setRpm(targetRpm);
+        setRpmBackspin(targetRpm);
     }
     
     /*
@@ -207,10 +241,11 @@ public class Shooter
     {   
         double d = distance;
         double rpm = 0;
+        d/=100;
         //Assume normal battery
-        rpm = (-.0000000785614)*(d*d*d*d)+(.000142)*(d*d*d)-(.0847712)*(d*d)+(22.802)*(d)-1077.34;
+        rpm = -12.581*d*d*d*d + 219.61*d*d*d -1198*d*d +2675.3*d -2109.8;
         targetRpm = rpm;
-        setRpm(targetRpm);
+        setRpmBackspin(targetRpm);
     }
     
     /*

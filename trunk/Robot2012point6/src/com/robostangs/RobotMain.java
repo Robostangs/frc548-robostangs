@@ -81,8 +81,8 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer() + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
-        System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
+        System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
+        //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
         /*
          * Check the air pressure, turn on compressor if nessisary.
          */
@@ -96,7 +96,7 @@ public class RobotMain extends IterativeRobot {
         //update dashboard
         //TODO: attempt to remove module 2 stuff; possibly fixed
         //TODO: fix true to on target
-        dash.updateDashboard(true, Double.toString((int)drive.axisCam.getDistance()), Double.toString((int)shoot.getTargetRpm()), Double.toString((int)shoot.getAverageRpm()), Double.toString((int)shoot.getRpmOffset()), Double.toString(arm.getAngle()));
+        dash.updateDashboard(true, Double.toString((int)drive.axisCam.getDistance()), Double.toString((int)shoot.getTargetRpm()), Double.toString((int)shoot.getTopRpm()), Double.toString((int)shoot.getRpmOffset()), Double.toString(arm.getAngle()));
             
         /*
          * Driver increase rpms by 25
@@ -111,17 +111,16 @@ public class RobotMain extends IterativeRobot {
         /*
          * Driver manual rpm speeds
          */
-        if(xboxDriver.aButton()){           //Front fender rpm
+        if(xboxDriver.aButton()){
             manipulatorRpmControl = false;
-            shoot.setRpm(Constants.SHOOTER_FRONT_FENDER_RPM);
-            drive.resetEncoders();//TODO: Remove
+            shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
         }else if(xboxDriver.bButton()){     //Side fender rpm
             manipulatorRpmControl = false;
-            shoot.setRpm(Constants.SHOOTER_SIDE_FENDER_RPM);
+            shoot.setRpmBackspin(Constants.SHOOTER_BACK_KEY_RPM);
         }else if(xboxDriver.xButton()){     //Front key rpm
             manipulatorRpmControl = false;
-            shoot.setRpm(Constants.SHOOTER_FRONT_KEY_RPM);
-        }else if(xboxDriver.yButton()){     //Back key rpm
+            shoot.setRpmBackspin(Constants.SHOOTER_SIDE_FENDER_RPM);
+        }else if(xboxDriver.yButton()){     //Front fender rpm
             manipulatorRpmControl = false;
             shoot.fenderShot();
         }else{
@@ -153,7 +152,6 @@ public class RobotMain extends IterativeRobot {
             //Manipulator is not using the YAxis2 to manual set
             if(xboxManip.bButton()){
                 if(currentManipButton != 0){
-                    arm.resetPid();
                     arm.setPidZero();
                     currentManipButton = 0;
                 }
@@ -162,7 +160,6 @@ public class RobotMain extends IterativeRobot {
             else if(xboxManip.aButton()){
                 if(!air.getIngestCylinder()){
                     if(currentManipButton != 1){
-                        arm.resetPid();
                         arm.setPidBottom();
                         currentManipButton = 1;
                     }
@@ -172,7 +169,6 @@ public class RobotMain extends IterativeRobot {
             else if(xboxManip.xButton()){
                 if(!air.getIngestCylinder()){
                     if(currentManipButton != 2){
-                        arm.resetPid();
                         arm.setPidMiddle();
                         currentManipButton = 2;
                     }
@@ -182,7 +178,6 @@ public class RobotMain extends IterativeRobot {
             else if(xboxManip.yButton()){
                 if(!air.getIngestCylinder()){
                     if(currentManipButton != 3){
-                        arm.resetPid();
                         arm.setPidTop();
                         currentManipButton = 3;
                     }
@@ -223,13 +218,13 @@ public class RobotMain extends IterativeRobot {
                 shoot.turnOnIngestor();
             }
             if(manipulatorRpmControl){
-                shoot.setRpm(-xboxManip.triggerAxis() * 1500 + 500);        //800-2000
+                shoot.setRpmBoth(-xboxManip.triggerAxis() * 1500 + 500);        //800-2000
             }
         }else if(xboxManip.triggerAxis() < -.2){
             //Right trigger is pressed
             air.setIngestCylinder(false);
             if(manipulatorRpmControl){
-                shoot.setRpm(-xboxManip.triggerAxis() * 2300 + 440);        //900-2740
+                shoot.setRpmBackspin(-xboxManip.triggerAxis() * 2300 + 440);        //900-2740
             }
             shoot.turnOffIngestor();
         }else{
@@ -246,7 +241,12 @@ public class RobotMain extends IterativeRobot {
                 drive.stop();
             }else{
                 if(manipulatorRpmControl){
-                    shoot.setRpm(0);
+                    if(shoot.getRpmOffset() == 0){
+                        shoot.setBottomRpm(0);
+                        shoot.setTopRpm(0);
+                    }else{
+                        shoot.setRpmBoth(0);
+                    }
                 }
             }
         }
@@ -270,6 +270,7 @@ public class RobotMain extends IterativeRobot {
             seekingTarget = true;
             try {
                 drive.axisCam.getImage();
+                System.out.println("D: " + drive.axisCam.getDistance() + " xc: " +drive.axisCam.getXCenter() + " h " + drive.axisCam.getHeading());
             } catch (AxisCameraException ex) {
                 ex.printStackTrace();
             } catch (NIVisionException ex) {
@@ -290,8 +291,13 @@ public class RobotMain extends IterativeRobot {
             }
             
             if(drive.onTarget()){
+                System.out.println("On target!");
+                drive.stop();
                 drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
             }else{
+                double target = drive.axisCam.getHeading() + angleOffset;
+                            System.out.println("Angle seeking " + target + " current: " + drive.getGyro() );
+
                 drive.setPosition(drive.axisCam.getHeading() + angleOffset);
             }
             
