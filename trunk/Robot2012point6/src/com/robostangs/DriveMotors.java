@@ -43,10 +43,10 @@ public class DriveMotors implements PIDOutput{
      */
     public void pidWrite(double output) {
         try { 
-            jag1.setX(output);
-            jag2.setX(output);
-            jag3.setX(output);
-            jag4.setX(output);
+            jag1.setX(-output);
+            jag2.setX(-output);
+            jag3.setX(-output);
+            jag4.setX(-output);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }

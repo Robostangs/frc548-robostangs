@@ -152,7 +152,7 @@ public class Camera implements PIDSource{
                 double fixedDistance = distance;//-.0343*distance*distance + 1.1926*distance - 0.1909;
                 fixedDistance *= 100; //to centimeters
                 //double fixedDistance = .9567*distance - 10.166;
-                System.out.println("D: " + distance + " fd: " + fixedDistance);
+                //System.out.println("D: " + distance + " fd: " + fixedDistance);
                 return fixedDistance;
             }else{
                 return 0;
@@ -168,8 +168,10 @@ public class Camera implements PIDSource{
      */
     public double getHeading(){
         double d = getDistance();   //m
-        double x = (320-(getTargetCenterX()+  (getTargetHeight()/.4572)*.254))*.55555;
-        System.out.println("xxxx:" + x);
+        //double x = (320-(getTargetCenterX()+  (getTargetHeight()/.4572)*.254))*.55555;
+        double x = ((getTargetCenterX() + (getTargetHeight()/.4572)*.245) -320) *.55555;
+        //double x = getTargetCenterX() - 320;
+        //System.out.println("xxxx:" + x);
         return MathUtils.atan(x/d) * 57.2957795;    //to degrees
     }
     

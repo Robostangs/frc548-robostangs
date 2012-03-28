@@ -15,7 +15,7 @@ public class Constants {
     /*
      * Arm
      */
-        public static final float ARM_POWER_COEFFICIENT = .75f;
+        public static final float ARM_POWER_COEFFICIENT = 1.0f;
         //TODO: Check bottom and comment positions with angle
         //public static final int ARM_BOTTOM = 374;
         //public static final int ARM_TOP = 598;
@@ -25,10 +25,10 @@ public class Constants {
         public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
         public static final int ARM_BOTTOM = 574;
-        public static final int ARM_TOP = 773;
+        public static final int ARM_TOP = 786;
         public static final int ARM_MIDDLE = 745;
         public static final int ARM_ZEROPOSITION = 355;
-        public static final int ARM_POT_MAX = 775;
+        public static final int ARM_POT_MAX = 788;
         public static final int ARM_POT_MIN = 352;
 
         /*
@@ -102,7 +102,6 @@ public class Constants {
         public static final int DRIVE_LEFT_ENCODER_2 = 2;
         public static final int DRIVE_RIGHT_ENCODER_1 = 3;
         public static final int DRIVE_RIGHT_ENCODER_2 = 4;        
-        //TODO: actually get for each wheel
         public static final double LEFT_DISTANCE_PER_TICK = -0.001829;
         public static final double RIGHT_DISTANCE_PER_TICK = -0.001289;
         public static final int DRIVE_JAG_1_POS = 7;        //left drive train motor
@@ -110,9 +109,9 @@ public class Constants {
         public static final int DRIVE_JAG_3_POS = 5;        //right drive train motor
         public static final int DRIVE_JAG_4_POS = 6;        //right drive train motor
         //PID constants
-        public static final double DKp = 0.07;
-        public static final double DKi = 0;
-        public static final double DKd = 0.03;
+        public static final double DKp = .02;
+        public static final double DKi = .005;
+        public static final double DKd = .02;
     
     /*
      * Joysticks

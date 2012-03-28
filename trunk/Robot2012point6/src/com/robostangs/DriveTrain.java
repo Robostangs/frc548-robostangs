@@ -1,9 +1,9 @@
 package com.robostangs;
 
+import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.Timer;
 
 /*
  *
@@ -23,7 +23,6 @@ public class DriveTrain {
         gyro = new Gyro(Constants.GYRO_POS);
         output = new DriveMotors();
         
-        
         leftEncoder = new Encoder(Constants.DRIVE_LEFT_ENCODER_1, Constants.DRIVE_LEFT_ENCODER_2);
         rightEncoder = new Encoder(Constants.DRIVE_RIGHT_ENCODER_1, Constants.DRIVE_RIGHT_ENCODER_2);
 
@@ -37,12 +36,11 @@ public class DriveTrain {
          * Pid controller used to turn the robot toward a target when
          * we are tracking.  Turned off otherwise.
          */
-        //camPid = new PIDController(Constants.DKp, Constants.DKi, Constants.DKd, axisCam, output);
         camPid = new PIDController(Constants.DKp, Constants.DKi, Constants.DKd, gyro, output);
         camPid.setOutputRange(-.5, .5);      //Allow range of turing motion.
         //camPid.setInputRange(0, 640);
         camPid.setContinuous(false);
-        camPid.setTolerance(10.0);
+        camPid.setTolerance(.6);
         camPid.disable();
     }
     
@@ -53,7 +51,7 @@ public class DriveTrain {
         if(Math.abs(rightStick) < .2){
             rightStick = 0;
         }
-         //If turning, y=x^2, retain sign;
+         //If turning, y=x^1.4, retain sign;
         if((leftStick < -.3 && rightStick > .3) || (leftStick > .3 && rightStick < -.3)){
             rightStick = rightStick*rightStick * (rightStick / Math.abs(rightStick));
             leftStick = leftStick*leftStick * (leftStick / Math.abs(leftStick));
@@ -105,22 +103,7 @@ public class DriveTrain {
     
     public void setPosition(double position)
     {
-        /*
-        if(Timer.getFPGATimestamp() - axisCam.lastImageTime > .3){
-            System.out.println("image too old");
-            stop();
-            return false;
-        }else if(Math.abs(320 - axisCam.getXCenter()) < 20){
-            System.out.println("Within 20 px: " + axisCam.getXCenter());
-            stop();
-            return true;
-        }else{
-            System.out.println("Continuing to look for target");
-            camPid.setSetpoint(position);
-            camPid.enable();
-            return false;
-        }*/
-        System.out.println("PositiontoGo: " + position + " current: " + gyro.pidGet()) ;
+        //System.out.println("PositiontoGo: " + position + " current: " + gyro.pidGet()) ;
         camPid.setSetpoint(position);
         camPid.enable();
     }
@@ -198,7 +181,7 @@ public class DriveTrain {
      */
     public void info(){
         if(axisCam.beginCalc){
-            System.out.println("Enabled: " + camPid.isEnable() + " Setpoint: " + camPid.getSetpoint() + " current: " + axisCam.pidGet() + " error: " + camPid.getError());
+            System.out.println("Enabled: " + camPid.isEnable() + " Setpoint: " + camPid.getSetpoint() + " current: " + gyro.pidGet() + " error: " + camPid.getError());
         }
     }
     

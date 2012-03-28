@@ -81,7 +81,7 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
+        //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
         //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
         /*
          * Check the air pressure, turn on compressor if nessisary.
@@ -116,10 +116,11 @@ public class RobotMain extends IterativeRobot {
             shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
         }else if(xboxDriver.bButton()){     //Side fender rpm
             manipulatorRpmControl = false;
-            shoot.setRpmBackspin(Constants.SHOOTER_BACK_KEY_RPM);
+            shoot.fenderShot();
         }else if(xboxDriver.xButton()){     //Front key rpm
             manipulatorRpmControl = false;
-            shoot.setRpmBackspin(Constants.SHOOTER_SIDE_FENDER_RPM);
+            //shoot.setRpmBackspin(Constants.SHOOTER_SIDE_FENDER_RPM);
+            shoot.setRpmBoth(150);
         }else if(xboxDriver.yButton()){     //Front fender rpm
             manipulatorRpmControl = false;
             shoot.fenderShot();
@@ -148,7 +149,15 @@ public class RobotMain extends IterativeRobot {
          * Manipulator arm position.
          * Checks to make sure ingestor is not out, where applicable.
          */
-        if(Math.abs(xboxManip.rightStickYAxis()) < 0.20){
+        if(xboxDriver.bButton()){
+             if(!air.getIngestCylinder()){
+                    if(currentManipButton != 3){
+                        arm.setPidTop();
+                        currentManipButton = 3;
+                    }
+                    arm.setPosition(Constants.ARM_TOP);
+                }
+        }else if(Math.abs(xboxManip.rightStickYAxis()) < 0.20){
             //Manipulator is not using the YAxis2 to manual set
             if(xboxManip.bButton()){
                 if(currentManipButton != 0){
@@ -216,9 +225,10 @@ public class RobotMain extends IterativeRobot {
             if(arm.getAngle() < Constants.INGESTOR_ARM_MAX_ANGLE){
                 air.setIngestCylinder(true);
                 shoot.turnOnIngestor();
+                shoot.setConveyorSpeed(-1);
             }
             if(manipulatorRpmControl){
-                shoot.setRpmBoth(-xboxManip.triggerAxis() * 1500 + 500);        //800-2000
+                shoot.setRpmBoth(-xboxManip.triggerAxis() * 2200);        //800-2000
             }
         }else if(xboxManip.triggerAxis() < -.2){
             //Right trigger is pressed
@@ -242,8 +252,7 @@ public class RobotMain extends IterativeRobot {
             }else{
                 if(manipulatorRpmControl){
                     if(shoot.getRpmOffset() == 0){
-                        shoot.setBottomRpm(0);
-                        shoot.setTopRpm(0);
+                        shoot.setRpmBoth(0);
                     }else{
                         shoot.setRpmBoth(0);
                     }
@@ -281,6 +290,7 @@ public class RobotMain extends IterativeRobot {
             if(!seekingTarget){
                 angleOffset = drive.getGyro();
                 seekingTarget = true;
+                System.out.println("beginning seek");
                 try {
                     drive.axisCam.getImage();
                 } catch (AxisCameraException ex) {
@@ -292,12 +302,13 @@ public class RobotMain extends IterativeRobot {
             
             if(drive.onTarget()){
                 System.out.println("On target!");
+                drive.info();
                 drive.stop();
                 drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
             }else{
+                System.out.println("Still looking");
                 double target = drive.axisCam.getHeading() + angleOffset;
-                            System.out.println("Angle seeking " + target + " current: " + drive.getGyro() );
-
+                drive.info();
                 drive.setPosition(drive.axisCam.getHeading() + angleOffset);
             }
             
