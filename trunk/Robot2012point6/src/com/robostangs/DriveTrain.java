@@ -76,9 +76,18 @@ public class DriveTrain {
      * Forces the robot in a straight direction,
      * used when we are facing a target.
      */
-    public void driveStraight(double left, double right){
-        double avg = (left+right)/2.0;
-        output.set(avg,avg,avg,avg);
+    public void driveStraight(double left, double right, double initGyro){
+        if(getGyro() - initGyro < -0.5){
+            right = right*.88;
+            left = left * 1.06;
+            drive(left,right);
+        }else if(getGyro() - initGyro > 0.5){
+            left = left*.90;
+            right = right*1.01;
+            drive(left,right);
+        }else{
+            drive(left,right);
+        }
     }
     
     /*

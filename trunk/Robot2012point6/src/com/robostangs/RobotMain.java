@@ -304,7 +304,7 @@ public class RobotMain extends IterativeRobot {
                 System.out.println("On target!");
                 drive.info();
                 drive.stop();
-                drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
+                drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis(), drive.getGyro());
             }else{
                 System.out.println("Still looking");
                 double target = drive.axisCam.getHeading() + angleOffset;
