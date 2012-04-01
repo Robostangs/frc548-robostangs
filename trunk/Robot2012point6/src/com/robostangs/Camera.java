@@ -47,9 +47,15 @@ public class Camera implements PIDSource{
                     ex.printStackTrace();
                 }
 
+                /*
                 BinaryImage thresholdImage = image.thresholdHSI(113,156,243,255,114,239);       //keep bright green
                 BinaryImage convexHullImage = thresholdImage.convexHull(true);                  // fill in occluded rectangles
                 BinaryImage bigObjectsImage = convexHullImage.removeSmallObjects(true, 4);      // remove small artifacts
+                BinaryImage filteredImage = bigObjectsImage.particleFilter(cc);                 // find filled in rectangles
+                */
+                BinaryImage thresholdImage = image.thresholdHSI(118,144,0,255,161,255);       //keep bright green
+                BinaryImage bigObjectsImage = thresholdImage.removeSmallObjects(true, 3);      // remove small artifacts
+                BinaryImage convexHullImage = bigObjectsImage.convexHull(true);                  // fill in occluded rectangles
                 BinaryImage filteredImage = bigObjectsImage.particleFilter(cc);                 // find filled in rectangles
 
                 reports = filteredImage.getOrderedParticleAnalysisReports();  // get list of results
@@ -81,28 +87,44 @@ public class Camera implements PIDSource{
      * Return the x coordinate of the center of the target.
      */
     public int getTargetCenterX(){
-        return lowestReport.center_mass_x;
+        if(lowestReport != null){
+            return lowestReport.center_mass_x;
+        }else{
+            return camera.getResolution().width/2;
+        }
     }
     
     /*
      * Return the y coordinate of the center of the target.
      */
     public int getTargetCenterY(){
-        return lowestReport.center_mass_y;
+        if(lowestReport != null){
+            return lowestReport.center_mass_y;
+        }else{
+            return camera.getResolution().height/2;
+        }
     }
     
     /*
      * Return the widht of the target, in pixels
      */
     public int getTargetWidth(){
-        return lowestReport.boundingRectWidth;
+        if(lowestReport != null){
+            return lowestReport.boundingRectWidth;
+        }else{
+            return 10;
+        }
     }
     
     /*
      * Return the height of the target, in pixels
      */
     public int getTargetHeight(){
-        return lowestReport.boundingRectHeight;
+        if(lowestReport != null){
+            return lowestReport.boundingRectHeight;
+        }else{
+            return 10;
+        }
     }
     
     /*
@@ -131,10 +153,10 @@ public class Camera implements PIDSource{
     
 
     /*
-     * Return the distance to the center of the target, in meters.
+     * Return the distance to the center of the target, in cm.
      */
     public double getDistance(){
-        if(Constants.USE_CAMERA){
+        if(Constants.USE_CAMERA && lowestReport != null){
             if(beginCalc){
                 double targetHeightMeters=.4572;    //18in in meters
                 double targetHeightPixels=lowestReport.boundingRectHeight;
@@ -172,7 +194,11 @@ public class Camera implements PIDSource{
         double x = ((getTargetCenterX() + (getTargetHeight()/.4572)*.245) -320) *.55555;
         //double x = getTargetCenterX() - 320;
         //System.out.println("xxxx:" + x);
-        return MathUtils.atan(x/d) * 57.2957795;    //to degrees
+        if(d != 0){
+            return MathUtils.atan(x/d) * 57.2957795;    //to degrees
+        }else{
+            return 0;
+        }
     }
     
     /*

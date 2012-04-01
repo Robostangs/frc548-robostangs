@@ -31,6 +31,8 @@ public class Autonomous2{
     private Pneumatics pn;
     private double speed = 0.5;
     private double initGyro;
+    private double tempGyro;
+    private double dToTarget = 0;
     
     public Autonomous2(DriveTrain d, Shooter s, Arm a, Pneumatics p){
         dt = d;
@@ -41,6 +43,8 @@ public class Autonomous2{
     }
     public void init(){
         dt.resetEncoders();
+        ar.setOutRange(-1f , 1f);
+        ar.setPidTop();
         step = 0;
         mode = Integer.parseInt(readMode());
         if(mode < 0 || mode > 4){
@@ -105,27 +109,39 @@ public class Autonomous2{
                             break;
                         case 1:
                             ar.setPosition(Constants.ARM_TOP);
-                            Timer.delay(8);
                             sh.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
+                            Timer.delay(2.5);
                             step++;
                             break;
                         case 2:
-                            sh.setConveyorSpeed(1);
+                            ar.stop();
                             sh.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
-                            Timer.delay(1);
+                            Timer.delay(.2);
                             step++;
                             break;
                         case 3:
-                            sh.setConveyorSpeed(-1);
-                            Timer.delay(1);
+                            ar.setPosition(Constants.ARM_TOP);
+                            sh.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
+                            Timer.delay(6);
                             step++;
                             break;
                         case 4:
                             sh.setConveyorSpeed(1);
+                            sh.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
+                            Timer.delay(1);
+                            step++;
+                            break;
+                        case 5:
+                            sh.setConveyorSpeed(-1);
+                            Timer.delay(1);
+                            step++;
+                            break;
+                        case 6:
+                            sh.setConveyorSpeed(1);
                             Timer.delay(1.5);
                             step++;
                             break;
-                        case 5: 
+                        case 7: 
                             sh.setConveyorSpeed(0);
                             sh.setRpmBoth(0);
                             ar.setPosition(Constants.ARM_ZEROPOSITION);
@@ -290,9 +306,190 @@ public class Autonomous2{
                     
                 default:
                     break;
+                /*
+                 * Drive forward to bridge, ingest, drive backward around key, aim, shoot
+                 */
+                case 5:
+                    switch(step){
+                        case 0:
+                            /*
+                             * Setup
+                             */
+                            sh.setRpmBoth(0);
+                            pn.setGear(Constants.LOW_SPEED);
+                            ar.setPidBottom();
+                            ar.setPosition(Constants.ARM_BOTTOM);
+                            step++;
+                            break;
+                        case 1:
+                            /*
+                             * Drive toward bridge
+                             */
+                            ar.setPosition(Constants.ARM_BOTTOM);
+                            check(1,1);
+                            if((Math.abs(dt.getLeftEncoder()) >= .2)){
+                                dm.set(0,0,0,0);
+                                dt.resetEncoders();
+                                step++;
+                                break;
+                            }
+                            break;
+                        case 2:
+                            /*
+                             * Ingest
+                             */
+                            ar.setPosition(Constants.ARM_BOTTOM);
+                            sh.turnOnIngestor();
+                            sh.setRpmBoth(-1000);
+                            sh.setConveyorSpeed(-1);
+                            Timer.delay(.8);
+                            step++;
+                            break;
+                        case 3:
+                            /*
+                             * Drive forward a bit, up on bridge
+                             */
+                            check(1,1);
+                            if((Math.abs(dt.getLeftEncoder()) >= .15)){
+                                dm.set(0,0,0,0);
+                                dt.resetEncoders();
+                                step++;
+                                break;
+                            }
+                            sh.setConveyorSpeed(-1);
+                            sh.setRpmBoth(-1000);
+                            break;
+                        case 4:
+                            /*
+                             * wait to ingest
+                             */
+                            
+                            //Redundant, but here anyway
+                            sh.setConveyorSpeed(-1);
+                            sh.setRpmBoth(-1000);
+                            
+                            Timer.delay(3);
+                            dt.resetEncoders();
+                            step++;
+                            break;
+                        case 5:
+                            /*backup a bit
+                             * 
+                             */
+                            check(-1,-1);
+                            if((Math.abs(dt.getLeftEncoder()) <= -.2)){
+                                dm.set(0,0,0,0);
+                                dt.resetEncoders();
+                                sh.turnOffIngestor();
+                                sh.setRpmBoth(0);
+                                sh.setConveyorSpeed(0);
+                                tempGyro = dt.getGyro();
+                                step++;
+                                break;
+                            }
+                            
+                            //Keep ingestor wheels on while backing up
+                            sh.setRpmBoth(-1000);
+                            sh.setConveyorSpeed(-1);
+                            break;
+                        case 6:
+                            /*
+                             *Turn 60 cw to avoid key when driving backwards, then shift to high speed
+                             */
+                            dt.drive(1, -1);
+                            if(dt.getGyro() - tempGyro >= 60){
+                                pn.setGear(!Constants.LOW_SPEED);
+                                step++;
+                                break;
+                            }
+                            break;
+                        case 7:
+                            /*
+                             * arc around key until parallel to sides of field
+                             */
+                            dt.drive(-1, -.75);
+                            if(dt.getGyro() - tempGyro <= 0){
+                                dt.resetEncoders();
+                                step++;
+                                break;
+                            }
+                            break;
+                        case 8:
+                            /*
+                             * Continue reversing, then low speed
+                             */
+                            check(-1,-1);
+                            if((Math.abs(dt.getLeftEncoder()) <= -1)){
+                                dm.set(0,0,0,0);
+                                dt.resetEncoders();
+                                pn.setGear(Constants.LOW_SPEED);
+                                
+                                //Get angle before turn
+                                tempGyro = dt.getGyro();
+                                ar.setPidTop();
+                                //Dont lose balls while raising arm
+                                sh.setConveyorSpeed(-.5);
+                                step++;
+                                break;
+                            }
+                            break;
+                        case 9:
+                            /*
+                             * turn about 135 degrees cw
+                             */
+                            ar.setPosition(Constants.ARM_TOP);
+                            dt.drive(1, -1);
+                            if(dt.getGyro() >= tempGyro + 160){
+                                dm.set(0,0,0,0);
+                                tempGyro = dt.getGyro();
+                               
+                                try {
+                                    dt.axisCam.getImage();
+                                } catch (AxisCameraException ex) {
+                                    ex.printStackTrace();
+                                } catch (NIVisionException ex) {
+                                    ex.printStackTrace();
+                                }
+                                 //wait for arm,camera
+                                Timer.delay(.7);
+                                sh.setConveyorSpeed(0);
+                                dToTarget = dt.axisCam.getDistance();
+                                ar.stop();
+                                step++;
+                                break;
+                            }
+                            break;
+                        case 10:
+                            /*
+                             * Track targets
+                             */
+                            dt.setPosition(dt.axisCam.getHeading() + tempGyro);
+                            sh.setRpmFromDistance(dToTarget);
+                            Timer.delay(2);
+
+                            dt.stop();
+                            step++;
+                            break;
+                        case 11:
+                            //If distance makes sense, bet. 50 and 500 cm
+                            if(dToTarget >= 50 && dToTarget <= 500){
+                                sh.setRpmFromDistance(dt.axisCam.getDistance());
+                                sh.setConveyorSpeed(.5);
+                                Timer.delay(3);
+                                ar.setPidBottom();
+                                step++;
+                                break;
+                            }
+                            break;
+                        case 12:
+                            ar.setPosition(Constants.ARM_BOTTOM);
+                            sh.setRpmBoth(0);
+                            sh.setConveyorSpeed(0);
+                        default:
+                            break;
+                    }
+                    break;
             }
         }
     }
-
-       
 }

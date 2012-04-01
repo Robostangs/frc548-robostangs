@@ -13,9 +13,13 @@ public class Arm
         output = new ArmMotor();
         apot = new ArmPot();
         pid = new PIDController(Constants.ARM_TOP_AKp, Constants.ARM_TOP_AKi, Constants.ARM_TOP_AKd, apot, output);
-        pid.setOutputRange(-.7, .6);     //Do not decrease as quickly (gas strut)
+        pid.setOutputRange(-1, 1);     //Do not decrease as quickly (gas strut)
         pid.setInputRange(Constants.ARM_POT_MIN, Constants.ARM_POT_MAX);
         pid.disable();
+    }
+    
+    public void setOutRange(float a, float b){
+        pid.setOutputRange(a, b);
     }
     
     /*

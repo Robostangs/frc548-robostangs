@@ -40,7 +40,7 @@ public class DriveTrain {
         camPid.setOutputRange(-.5, .5);      //Allow range of turing motion.
         //camPid.setInputRange(0, 640);
         camPid.setContinuous(false);
-        camPid.setTolerance(.6);
+        camPid.setTolerance(.5);
         camPid.disable();
     }
     
@@ -77,16 +77,17 @@ public class DriveTrain {
      * used when we are facing a target.
      */
     public void driveStraight(double left, double right, double initGyro){
+        double val = left + right /2.0;
         if(getGyro() - initGyro < -0.5){
-            right = right*.88;
-            left = left * 1.06;
+            right = val*.88;
+            left = val * 1.06;
             drive(left,right);
         }else if(getGyro() - initGyro > 0.5){
-            left = left*.90;
-            right = right*1.01;
+            left = val*.90;
+            right = val*1.01;
             drive(left,right);
         }else{
-            drive(left,right);
+            drive(val,val);
         }
     }
     

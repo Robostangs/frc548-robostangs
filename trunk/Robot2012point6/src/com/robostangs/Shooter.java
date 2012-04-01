@@ -26,6 +26,10 @@ public class Shooter
             ex.printStackTrace();
         }
       
+        configJags();
+    }
+    
+    public void configJags(){
         try {
             topMotor.changeControlMode(CANJaguar.ControlMode.kSpeed);
             topMotor.setPID(Constants.SKp, Constants.SKi, Constants.SKd);
@@ -43,6 +47,17 @@ public class Shooter
             ex.printStackTrace();
         }
     }
+    
+    public void checkShooterJags(){
+        try {
+            if((topMotor.getControlMode() != CANJaguar.ControlMode.kSpeed) || (bottomMotor.getControlMode() != CANJaguar.ControlMode.kSpeed) ){
+                configJags();               
+            }
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     /*
      * Set the speed of the conveyor belt.
      */
