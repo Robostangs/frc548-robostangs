@@ -70,7 +70,7 @@ public class Camera implements PIDSource{
                         lowestReport = r;  
                     }
                   if(r.center_mass_y < reports[highestIndex].center_mass_y){
-                    hightestIndex = i;
+                    highestIndex = i;
                     highestReport = r;
                   }
                 }
@@ -185,11 +185,11 @@ public class Camera implements PIDSource{
     public double getDistance(){
         if(Constants.USE_CAMERA && lowestReport != null){
             if(beginCalc){
-                double targetHeightMeters=.4572;    //18in in meters
+                double targetHeightMeters=.4572;    					//18in in meters
                 double targetHeightPixels=lowestReport.boundingRectHeight;
-                double fieldHeightMeters;           //Determined with mathematics
+                double fieldHeightMeters;           					//Determined with mathematics
                 double fieldHeightPixels= camera.getResolution().height;
-                double theta = Math.toRadians(Constants.CAM_FOV_ANGLE);                //Axis M1011 angle/2
+                double theta = Math.toRadians(Constants.CAM_FOV_ANGLE);                	//Axis M1011 angle/2
                 double distance;
 
                 fieldHeightMeters = (targetHeightMeters * fieldHeightPixels)/targetHeightPixels;
@@ -198,10 +198,9 @@ public class Camera implements PIDSource{
 
                 distance = (fieldHeightMeters)/Math.tan(theta);
                 
-                double fixedDistance = distance;//-.0343*distance*distance + 1.1926*distance - 0.1909;
+		//TODO: Check for an equation
+                double fixedDistance = distance;
                 fixedDistance *= 100; //to centimeters
-                //double fixedDistance = .9567*distance - 10.166;
-                //System.out.println("D: " + distance + " fd: " + fixedDistance);
                 return fixedDistance;
             }else{
                 return 0;
@@ -217,10 +216,7 @@ public class Camera implements PIDSource{
      */
     public double getHeading(){
         double d = getDistance();   //m
-        //double x = (320-(getTargetCenterX()+  (getTargetHeight()/.4572)*.254))*.55555;
         double x = ((getTargetCenterX() + (getTargetHeight()/.4572)*.245) -320) *.55555;
-        //double x = getTargetCenterX() - 320;
-        //System.out.println("xxxx:" + x);
         if(d != 0){
             return MathUtils.atan(x/d) * 57.2957795;    //to degrees
         }else{
