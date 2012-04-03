@@ -18,7 +18,7 @@ public class Camera implements PIDSource{
     private ParticleAnalysisReport highestReport;   //Top Rectangle Target
     public boolean beginCalc = false;
     private boolean checkSize = false;              //enable size requirements if more than 4 results
-    public double lastImageTime = 0;
+    public double lastImageTime = 0;                //hi
     public boolean searchHigh = true;               //Look at high or low targets
 
     
