@@ -88,71 +88,97 @@ public class Camera implements PIDSource{
      * Return the x coordinate of the center of the target.
      */
     public int getTargetCenterX(){
-        if(lowestReport != null){
-            return lowestReport.center_mass_x;
-        }else{
-            return camera.getResolution().width/2;
-        }
+	if(searchHigh){
+		if(highestReport != null){
+			return highestReport.center_mass_x;
+		}else{
+			return camera.getResolution().width/2;
+		}
+	}else{
+	        if(lowestReport != null){
+       			return lowestReport.center_mass_x;
+        	}else{
+            		return camera.getResolution().width/2;
+        	}
+	}
     }
     
     /*
      * Return the y coordinate of the center of the target.
      */
     public int getTargetCenterY(){
-        if(lowestReport != null){
-            return lowestReport.center_mass_y;
-        }else{
-            return camera.getResolution().height/2;
-        }
+	if(searchHigh){
+		if(highestReport != null){
+			return highestReport.center_mass_y;
+		}else{
+			return camera.getResolution().height/2;
+		}
+	}else{
+	        if(lowestReport != null){
+       			return lowestReport.center_mass_y;
+        	}else{
+            		return camera.getResolution().height/2;
+        	}
+	}
     }
     
     /*
-     * Return the widht of the target, in pixels
+     * Return the width of the target, in pixels
      */
     public int getTargetWidth(){
-        if(lowestReport != null){
-            return lowestReport.boundingRectWidth;
-        }else{
-            return 10;
-        }
+	if(searchHigh){
+		if(highestReport != null){
+			return highestReport.boundingRectWidth;
+		}else{
+			return 10;
+		}
+	}else{
+	        if(lowestReport != null){
+       			return lowestReport.boundingRectWidth;
+        	}else{
+            		return 10; 
+        	}
+	}
     }
     
     /*
      * Return the height of the target, in pixels
      */
     public int getTargetHeight(){
-        if(lowestReport != null){
-            return lowestReport.boundingRectHeight;
-        }else{
-            return 10;
-        }
+	if(searchHigh){
+		if(highestReport != null){
+			return highestReport.boundingRectHeight;
+		}else{
+			return 10;
+		}
+	}else{
+	        if(lowestReport != null){
+       			return lowestReport.boundingRectHeight;
+        	}else{
+            		return 10; 
+        	}
+	}
     }
     
     /*
      * Return the area of the target, in pixels
      */
     public double getTargetArea(){
-        return lowestReport.particleArea;
+	if(searchHigh){
+		if(highestReport != null){
+			return highestReport.particleArea;
+		}else{
+			return 10;
+		}
+	}else{
+	        if(lowestReport != null){
+       			return lowestReport.particleArea;
+        	}else{
+            		return 10; 
+        	}
+	}
     }
     
-    /*
-     * Return center X pixel, adjusting for camera not in center of robot.
-     */
-    public int getXCenter(){
-        if(Constants.USE_CAMERA){
-            if(reports.length > 0 && beginCalc){
-                int z = getTargetCenterX() + (int)((.28*getTargetHeight()) / .44);
-                return z;
-            }
-            else{
-                return -1;
-            }
-        }else{
-            return -1;
-        }
-    }
-    
-
     /*
      * Return the distance to the center of the target, in cm.
      */
@@ -217,7 +243,7 @@ public class Camera implements PIDSource{
      * Return the center pixel, for use in pid.
      */
     public double pidGet() {
-        double x = getHeading();//getXCenter();
+        double x = getHeading();
         return x;
     }
 }
