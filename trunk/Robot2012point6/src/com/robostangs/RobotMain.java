@@ -245,10 +245,10 @@ public class RobotMain extends IterativeRobot {
         }else if(xboxManip.triggerAxis() < -.2){
             //Right trigger is pressed
             air.setIngestCylinder(false);
+            shoot.turnOffIngestor();
             if(manipulatorRpmControl){
                 shoot.setRpmBackspin(-xboxManip.triggerAxis() * 2300 + 440);        //900-2740
             }
-            shoot.turnOffIngestor();
         }else{
             air.setIngestCylinder(false);
             shoot.turnOffIngestor();
