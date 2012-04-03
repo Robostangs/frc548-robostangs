@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.image.*;
 import com.sun.squawk.util.MathUtils;
 
 /**
- *
  * @author john
  */
 public class Camera implements PIDSource{
