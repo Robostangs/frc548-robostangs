@@ -101,8 +101,6 @@ public class RobotMain extends IterativeRobot {
         voltage = DriverStation.getInstance().getBatteryVoltage();
         
         //update dashboard
-        //TODO: attempt to remove module 2 stuff; possibly fixed
-        //TODO: fix true to on target
         dash.updateDashboard(drive.onTarget(), Double.toString((int)drive.axisCam.getDistance()), Double.toString((int)shoot.getTargetRpm()), Double.toString((int)shoot.getTopRpm()), Double.toString((int)shoot.getRpmOffset()), Double.toString(arm.getAngle()));
             
         /*
@@ -118,16 +116,15 @@ public class RobotMain extends IterativeRobot {
         /*
          * Driver manual rpm speeds
          */
-        if(xboxDriver.aButton()){
+        if(xboxDriver.aButton()){           //Front key rpm
             manipulatorRpmControl = false;
             shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
-        }else if(xboxDriver.bButton()){     //Side fender rpm
+        }else if(xboxDriver.bButton()){     //Front Fender rpm
             manipulatorRpmControl = false;
             shoot.fenderShot();
-        }else if(xboxDriver.xButton()){     //Front key rpm
+        }else if(xboxDriver.xButton()){     //Side fender rpm
             manipulatorRpmControl = false;
-            //shoot.setRpmBackspin(Constants.SHOOTER_SIDE_FENDER_RPM);
-            shoot.setRpmBackspin(240);
+            shoot.setRpmBackspin(Constants.SHOOTER_SIDE_FENDER_RPM);
         }else if(xboxDriver.yButton()){     //Front fender rpm
             manipulatorRpmControl = false;
             shoot.fenderShot();

@@ -17,11 +17,6 @@ public class Constants {
      */
         public static final float ARM_POWER_COEFFICIENT = 1.0f;
         //TODO: Check bottom and comment positions with angle
-        //public static final int ARM_BOTTOM = 374;
-        //public static final int ARM_TOP = 598;
-        //public static final int ARM_MIDDLE = 555;
-        //public static final int ARM_ZEROPOSITION = 182;
-        
         public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
         public static final int ARM_BOTTOM = 574;
@@ -30,29 +25,11 @@ public class Constants {
         public static final int ARM_ZEROPOSITION = 352;
         public static final int ARM_POT_MAX = 788;
         public static final int ARM_POT_MIN = 352;
-
-        /*
-      
-        public static final double ARM_ZERO_AKp = 0.01;
-        public static final double ARM_ZERO_AKi = 0.0001;
-        public static final double ARM_ZERO_AKd = 0;
-        public static final double ARM_TOP_AKp = 0.01;
-        public static final double ARM_TOP_AKi = 0;
-        public static final double ARM_TOP_AKd = 0;
-        public static final double ARM_MIDDLE_AKp = 0.01;
-        public static final double ARM_MIDDLE_AKi = 0;
-        public static final double ARM_MIDDLE_AKd = 0;
-        public static final double ARM_BOTTOM_AKp = 0.01;
-        public static final double ARM_BOTTOM_AKi = 0;
-        public static final double ARM_BOTTOM_AKd = 0;
-        * */
-       
         
         //366, +125 = 269
         //566, -425 = 1231
         //652, -375, 2169
         //Bridge, 3572
-        
         
         //PID constants, competetion
         public static final double ARM_ZERO_AKp = 0.023;
@@ -89,7 +66,7 @@ public class Constants {
         public static final double SKd = 0;
         //TODO: Get values
         public static final double SHOOTER_FRONT_FENDER_RPM = 1162.49046;
-        public static final double SHOOTER_SIDE_FENDER_RPM = 878.16408;
+        public static final double SHOOTER_SIDE_FENDER_RPM = 240;
         public static final double SHOOTER_FRONT_KEY_RPM = 1362.1674;
         public static final double SHOOTER_BACK_KEY_RPM = 1735.8208;
         //TODO: Check

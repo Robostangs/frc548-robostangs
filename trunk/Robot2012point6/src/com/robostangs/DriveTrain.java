@@ -65,7 +65,7 @@ public class DriveTrain {
          * turn pid off it if it is actually on.
          */
         if(camPid.isEnable()){
-            camPid.disable();      //Turn off pid, manuall control
+            camPid.disable();      //Turn off pid, manual control
         }
         
        
@@ -113,7 +113,6 @@ public class DriveTrain {
     
     public void setPosition(double position)
     {
-        //System.out.println("PositiontoGo: " + position + " current: " + gyro.pidGet()) ;
         camPid.setSetpoint(position);
         camPid.enable();
     }

@@ -247,7 +247,8 @@ public class Shooter
         }*/
         targetRpm = rpm;
         setRpmBackspin(targetRpm);
-    }
+    }        
+
     
     /*
      * Set wheel rpm based on the distance to the target. 
