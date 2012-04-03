@@ -15,10 +15,12 @@ public class Camera implements PIDSource{
     private AxisCamera camera;
     private CriteriaCollection cc;                  // the criteria for doing the particle filter operation
     private ParticleAnalysisReport[] reports;       //Array of particle reports
-    private ParticleAnalysisReport lowestReport;    //BottomRectangle
+    private ParticleAnalysisReport lowestReport;    //Bottom Rectangle Target
+    private ParticleAnalysisReport highestReport;   //Top Rectangle Target
     public boolean beginCalc = false;
     private boolean checkSize = false;              //enable size requirements if more than 4 results
     public double lastImageTime = 0;
+    public boolean searchHigh = true;               //Look at high or low targets
 
     
     public Camera(){
@@ -52,20 +54,26 @@ public class Camera implements PIDSource{
                 BinaryImage filteredImage = bigObjectsImage.particleFilter(cc);                 // find filled in rectangles
 
                 reports = filteredImage.getOrderedParticleAnalysisReports();  // get list of results
-                int biggestIndex = 0;
+                int lowestIndex = 0;
+                int highestIndex = 0;
                 
                 if(reports.length > 0){
                       lowestReport = reports[0];
+                      highestReport = reports[0];
                 }
                 if(reports.length > 4){
                     checkSize = true;
                 }
                 for (int i = 0; i < reports.length; i++) {
                     ParticleAnalysisReport r = reports[i];
-                    if(r.center_mass_y > reports[biggestIndex].center_mass_y){
-                        biggestIndex = i;
+                    if(r.center_mass_y > reports[lowestIndex].center_mass_y){
+                        lowestIndex = i;
                         lowestReport = r;  
                     }
+                  if(r.center_mass_y < reports[highestIndex].center_mass_y){
+                    hightestIndex = i;
+                    highestReport = r;
+                  }
                 }
                 lastImageTime = Timer.getFPGATimestamp();
                 filteredImage.free();
