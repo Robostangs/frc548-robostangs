@@ -29,7 +29,6 @@ public class Camera implements PIDSource{
         cc = new CriteriaCollection();      // create the criteria for the particle filter
         //cc.addCriteria(MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 640, false);
         //cc.addCriteria(MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 480, false);
-        //camServo = new Servo(1,2);
     }
     
     /*
@@ -47,12 +46,6 @@ public class Camera implements PIDSource{
                     ex.printStackTrace();
                 }
 
-                /*
-                BinaryImage thresholdImage = image.thresholdHSI(113,156,243,255,114,239);       //keep bright green
-                BinaryImage convexHullImage = thresholdImage.convexHull(true);                  // fill in occluded rectangles
-                BinaryImage bigObjectsImage = convexHullImage.removeSmallObjects(true, 4);      // remove small artifacts
-                BinaryImage filteredImage = bigObjectsImage.particleFilter(cc);                 // find filled in rectangles
-                */
                 BinaryImage thresholdImage = image.thresholdHSI(118,144,0,255,161,255);       //keep bright green
                 BinaryImage bigObjectsImage = thresholdImage.removeSmallObjects(true, 3);      // remove small artifacts
                 BinaryImage convexHullImage = bigObjectsImage.convexHull(true);                  // fill in occluded rectangles
@@ -60,13 +53,14 @@ public class Camera implements PIDSource{
 
                 reports = filteredImage.getOrderedParticleAnalysisReports();  // get list of results
                 int biggestIndex = 0;
+                
                 if(reports.length > 0){
-                    lowestReport = reports[0];
+                      lowestReport = reports[0];
                 }
                 if(reports.length > 4){
                     checkSize = true;
                 }
-                for (int i = 0; i < reports.length; i++) {                                // print results
+                for (int i = 0; i < reports.length; i++) {
                     ParticleAnalysisReport r = reports[i];
                     if(r.center_mass_y > reports[biggestIndex].center_mass_y){
                         biggestIndex = i;
