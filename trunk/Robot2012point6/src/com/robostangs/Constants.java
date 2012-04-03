@@ -38,7 +38,7 @@ public class Constants {
         public static final double ARM_TOP_AKp = 0.01;
         public static final double ARM_TOP_AKi = 0.00001;
         public static final double ARM_TOP_AKd = 0.028;
-        public static final double ARM_MIDDLE_AKp = 0.015;
+        public static final double ARM_MIDDLE_AKp = 0.008;
         public static final double ARM_MIDDLE_AKi = 0.00001;
         public static final double ARM_MIDDLE_AKd = 0.025;
         public static final double ARM_BOTTOM_AKp = 0.0165;
