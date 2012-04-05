@@ -85,6 +85,7 @@ public class RobotMain extends IterativeRobot {
     public void teleopPeriodic() {
         //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
         //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
+        //System.out.println("Bottom: " + shoot.getBottomRpm() + " " + " Top: " + shoot.getTopRpm());
         /*
          * Check the air pressure, turn on compressor if nessisary.
          */
@@ -252,7 +253,7 @@ public class RobotMain extends IterativeRobot {
         }else{
             air.setIngestCylinder(false);
             shoot.turnOffIngestor();
-            if(seekingTarget && drive.onTarget()){  
+            if(seekingTarget){// && drive.onTarget()){  
                 //Automatic shooting speed (if no triggers pressed)
                 if(manipulatorRpmControl){
                     shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage);
@@ -291,7 +292,6 @@ public class RobotMain extends IterativeRobot {
             seekingTarget = true;
             try {
                 drive.axisCam.getImage();
-                System.out.println("D: " + drive.axisCam.getDistance() + " xc: " +drive.axisCam.getXCenter() + " h " + drive.axisCam.getHeading());
             } catch (AxisCameraException ex) {
                 ex.printStackTrace();
             } catch (NIVisionException ex) {
@@ -299,6 +299,7 @@ public class RobotMain extends IterativeRobot {
             }
             drive.driveXbox(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
         }else if(xboxDriver.rBumper()){
+            System.out.println("TargetXCenter: " + drive.axisCam.getTargetCenterX() + " TargetYCenter: " + drive.axisCam.getTargetCenterY() + " Heading: " + drive.axisCam.getHeading() + " Distance: " + drive.axisCam.getDistance());
             if(!seekingTarget){
                 angleOffset = drive.getGyro();
                 onTarget = false;

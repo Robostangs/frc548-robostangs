@@ -19,12 +19,17 @@ public class Constants {
         //TODO: Check bottom and comment positions with angle
         public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
-        public static final int ARM_BOTTOM = 574;
+        
+        /*public static final int ARM_BOTTOM = 574;
         public static final int ARM_TOP = 786;
         public static final int ARM_MIDDLE = 745;
-        public static final int ARM_ZEROPOSITION = 352;
-        public static final int ARM_POT_MAX = 788;
-        public static final int ARM_POT_MIN = 352;
+        public static final int ARM_ZEROPOSITION = 352;*/
+        public static final int ARM_BOTTOM = 372;
+        public static final int ARM_TOP = 582;
+        public static final int ARM_MIDDLE = 562;
+        public static final int ARM_ZEROPOSITION = 190;
+        public static final int ARM_POT_MAX = ARM_TOP + 2;
+        public static final int ARM_POT_MIN = ARM_ZEROPOSITION -2;
         
         //366, +125 = 269
         //566, -425 = 1231

@@ -19,7 +19,7 @@ public class Camera implements PIDSource{
     public boolean beginCalc = false;
     private boolean checkSize = false;              //enable size requirements if more than 4 results
     public double lastImageTime = 0;               
-    public boolean searchHigh = true;               //Look at high or low targets
+    public boolean searchHigh = false;               //Look at high or low targets
 
     
     public Camera(){
