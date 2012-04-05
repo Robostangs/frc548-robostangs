@@ -198,7 +198,7 @@ public class DriveTrain {
      * According to pid, are we centered with the square.
      */
     public boolean onTarget(){
-        if(Math.abs(gyro.getAngle() - camPid.getSetpoint()) < 1){
+        if(Math.abs(gyro.getAngle() - camPid.getSetpoint()) < .25){
             return true;
         }else{
             return false;
