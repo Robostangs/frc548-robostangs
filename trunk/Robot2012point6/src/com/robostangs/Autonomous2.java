@@ -47,8 +47,8 @@ public class Autonomous2{
         ar.setPidTop();
         step = 0;
         mode = Integer.parseInt(readMode());
-        if(mode < 0 || mode > 4){
-            mode = 0;
+        if(mode < 0 || mode > 5){
+            mode = 1;
         }
         System.out.println("mode: " + mode);
         initGyro = dt.getGyro();
@@ -312,20 +312,22 @@ public class Autonomous2{
                 case 5:
                     switch(step){
                         case 0:
+                            System.out.println("0");
                             /*
                              * Setup
                              */
                             sh.setRpmBoth(0);
                             pn.setGear(Constants.LOW_SPEED);
                             ar.setPidBottom();
-                            ar.setPosition(Constants.ARM_BOTTOM);
+                            ar.setPosition(Constants.ARM_ZEROPOSITION);
                             step++;
                             break;
                         case 1:
+                            System.out.println("1");
                             /*
                              * Drive toward bridge
                              */
-                            ar.setPosition(Constants.ARM_BOTTOM);
+                            ar.setPosition(Constants.ARM_ZEROPOSITION);
                             check(1,1);
                             if((Math.abs(dt.getLeftEncoder()) >= .2)){
                                 dm.set(0,0,0,0);
@@ -335,10 +337,11 @@ public class Autonomous2{
                             }
                             break;
                         case 2:
+                            System.out.println("2");
                             /*
                              * Ingest
                              */
-                            ar.setPosition(Constants.ARM_BOTTOM);
+                            ar.setPosition(Constants.ARM_ZEROPOSITION);
                             sh.turnOnIngestor();
                             sh.setRpmBoth(-1000);
                             sh.setConveyorSpeed(-1);
@@ -346,6 +349,7 @@ public class Autonomous2{
                             step++;
                             break;
                         case 3:
+                            System.out.println("3");
                             /*
                              * Drive forward a bit, up on bridge
                              */
@@ -360,6 +364,7 @@ public class Autonomous2{
                             sh.setRpmBoth(-1000);
                             break;
                         case 4:
+                            System.out.println("4");
                             /*
                              * wait to ingest
                              */
@@ -373,11 +378,12 @@ public class Autonomous2{
                             step++;
                             break;
                         case 5:
+                            System.out.println("5");
                             /*backup a bit
                              * 
                              */
                             check(-1,-1);
-                            if((Math.abs(dt.getLeftEncoder()) <= -.2)){
+                            if(dt.getLeftEncoder() <= -.2){
                                 dm.set(0,0,0,0);
                                 dt.resetEncoders();
                                 sh.turnOffIngestor();
@@ -393,10 +399,11 @@ public class Autonomous2{
                             sh.setConveyorSpeed(-1);
                             break;
                         case 6:
+                            System.out.println("6");
                             /*
                              *Turn 60 cw to avoid key when driving backwards, then shift to high speed
                              */
-                            dt.drive(1, -1);
+                            dt.drive(.75, -.75);
                             if(dt.getGyro() - tempGyro >= 60){
                                 pn.setGear(!Constants.LOW_SPEED);
                                 step++;
@@ -404,10 +411,11 @@ public class Autonomous2{
                             }
                             break;
                         case 7:
+                            System.out.println("7");
                             /*
                              * arc around key until parallel to sides of field
                              */
-                            dt.drive(-1, -.75);
+                            dt.drive(-1, -.6);
                             if(dt.getGyro() - tempGyro <= 0){
                                 dt.resetEncoders();
                                 step++;
@@ -415,11 +423,12 @@ public class Autonomous2{
                             }
                             break;
                         case 8:
+                            System.out.println("8");
                             /*
                              * Continue reversing, then low speed
                              */
                             check(-1,-1);
-                            if((Math.abs(dt.getLeftEncoder()) <= -1)){
+                            if(dt.getLeftEncoder() <= -.4){
                                 dm.set(0,0,0,0);
                                 dt.resetEncoders();
                                 pn.setGear(Constants.LOW_SPEED);
@@ -434,11 +443,12 @@ public class Autonomous2{
                             }
                             break;
                         case 9:
+                            System.out.println("9");
                             /*
                              * turn about 135 degrees cw
                              */
                             ar.setPosition(Constants.ARM_TOP);
-                            dt.drive(1, -1);
+                            dt.drive(.65, -.65);
                             if(dt.getGyro() >= tempGyro + 160){
                                 dm.set(0,0,0,0);
                                 tempGyro = dt.getGyro();
@@ -460,17 +470,19 @@ public class Autonomous2{
                             }
                             break;
                         case 10:
+                            System.out.println("10");
                             /*
                              * Track targets
                              */
                             dt.setPosition(dt.axisCam.getHeading() + tempGyro);
                             sh.setRpmFromDistance(dToTarget);
-                            Timer.delay(2);
+                            Timer.delay(5);
 
                             dt.stop();
                             step++;
                             break;
                         case 11:
+                            System.out.println("11");
                             //If distance makes sense, bet. 50 and 500 cm
                             if(dToTarget >= 50 && dToTarget <= 500){
                                 sh.setRpmFromDistance(dt.axisCam.getDistance());
@@ -482,7 +494,8 @@ public class Autonomous2{
                             }
                             break;
                         case 12:
-                            ar.setPosition(Constants.ARM_BOTTOM);
+                            System.out.println("12");
+                            ar.setPosition(Constants.ARM_ZEROPOSITION);
                             sh.setRpmBoth(0);
                             sh.setConveyorSpeed(0);
                         default:

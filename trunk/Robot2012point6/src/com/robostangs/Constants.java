@@ -91,8 +91,8 @@ public class Constants {
         public static final int DRIVE_LEFT_ENCODER_2 = 2;
         public static final int DRIVE_RIGHT_ENCODER_1 = 3;
         public static final int DRIVE_RIGHT_ENCODER_2 = 4;        
-        public static final double LEFT_DISTANCE_PER_TICK = -0.001829;
-        public static final double RIGHT_DISTANCE_PER_TICK = -0.001289;
+        public static final double LEFT_DISTANCE_PER_TICK = -.0018419499;//-0.001829;
+        public static final double RIGHT_DISTANCE_PER_TICK = .0018459978;//-0.001289;
         public static final int DRIVE_JAG_1_POS = 7;        //left drive train motor
         public static final int DRIVE_JAG_2_POS = 8;        //left drive train motor
         public static final int DRIVE_JAG_3_POS = 5;        //right drive train motor

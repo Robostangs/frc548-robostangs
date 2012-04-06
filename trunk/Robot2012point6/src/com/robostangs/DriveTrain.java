@@ -161,7 +161,7 @@ public class DriveTrain {
      * Return the distance that the left encoder has traveled since last reset, in meters.
      */
     public double getLeftEncoder(){
-        return -(leftEncoder.getDistance());
+        return leftEncoder.getDistance();
     }
     
     /*

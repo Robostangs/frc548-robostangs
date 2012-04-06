@@ -85,6 +85,7 @@ public class RobotMain extends IterativeRobot {
     public void teleopPeriodic() {
         //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
         //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
+        //System.out.println("L: " + drive.getLeftCount() + " R: " + drive.getRightCount());
         //System.out.println("Bottom: " + shoot.getBottomRpm() + " " + " Top: " + shoot.getTopRpm());
         /*
          * Check the air pressure, turn on compressor if nessisary.
@@ -120,6 +121,8 @@ public class RobotMain extends IterativeRobot {
         if(xboxDriver.aButton()){           //Front key rpm
             manipulatorRpmControl = false;
             shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
+            //TODO: Remove
+            drive.resetEncoders();
         }else if(xboxDriver.bButton()){     //Front Fender rpm
             manipulatorRpmControl = false;
             shoot.fenderShot();
@@ -222,7 +225,11 @@ public class RobotMain extends IterativeRobot {
          * Manipulator conveyor controls
          */
         if(xboxManip.rBumper()){
-            shoot.setConveyorSpeed(.4);
+            if(arm.getAngle() > 52.5){
+                shoot.setConveyorSpeed(.7);
+            }else{
+                shoot.setConveyorSpeed(.4);
+            }
         }else if(xboxManip.lBumper()){
             shoot.setConveyorSpeed(-1);
         }else{
@@ -253,15 +260,17 @@ public class RobotMain extends IterativeRobot {
         }else{
             air.setIngestCylinder(false);
             shoot.turnOffIngestor();
+/*
             if(seekingTarget){// && drive.onTarget()){  
                 //Automatic shooting speed (if no triggers pressed)
                 if(manipulatorRpmControl){
                     shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage);
                 }
-            }else if(seekingTarget && xboxDriver.lBumper()){
+*/
+            if(xboxDriver.lBumper()){
                 //Override target seeking
                 shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage);
-                drive.stop();
+                //drive.stop();
             }else{
                 if(manipulatorRpmControl){
                     if(shoot.getRpmOffset() == 0){

@@ -47,7 +47,7 @@ public class Camera implements PIDSource{
                     ex.printStackTrace();
                 }
 
-                BinaryImage thresholdImage = image.thresholdHSI(118,144,0,255,161,255);       //keep bright green
+                BinaryImage thresholdImage = image.thresholdHSV(99,191,180,255,172,255);       //keep bright green
                 BinaryImage bigObjectsImage = thresholdImage.removeSmallObjects(true, 3);      // remove small artifacts
                 BinaryImage convexHullImage = bigObjectsImage.convexHull(true);                  // fill in occluded rectangles
                 BinaryImage filteredImage = bigObjectsImage.particleFilter(cc);                 // find filled in rectangles
