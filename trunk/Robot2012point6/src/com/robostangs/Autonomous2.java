@@ -144,7 +144,7 @@ public class Autonomous2{
                         case 7: 
                             sh.setConveyorSpeed(0);
                             sh.setRpmBoth(0);
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             Timer.delay(4);
                             break;
                         default:
@@ -183,7 +183,7 @@ public class Autonomous2{
                         case 3:     //Reset
                             sh.setTopRpm(0);
                             sh.setBottomRpm(0);
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             sh.setConveyorSpeed(0);
                             break;    
                             
@@ -244,7 +244,7 @@ public class Autonomous2{
                             break;
                         case 6:     //Reset
                             sh.setRpmBoth(0);
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             sh.setConveyorSpeed(0);
                             break;                            
                     }
@@ -285,7 +285,7 @@ public class Autonomous2{
                         case 5: 
                             sh.setConveyorSpeed(0);
                             sh.setRpmBoth(0);
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             Timer.delay(4);
                             break;
                         default:
@@ -319,7 +319,7 @@ public class Autonomous2{
                             sh.setRpmBoth(0);
                             pn.setGear(Constants.LOW_SPEED);
                             ar.setPidBottom();
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             step++;
                             break;
                         case 1:
@@ -327,7 +327,7 @@ public class Autonomous2{
                             /*
                              * Drive toward bridge
                              */
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             check(1,1);
                             if((Math.abs(dt.getLeftEncoder()) >= .2)){
                                 dm.set(0,0,0,0);
@@ -341,7 +341,7 @@ public class Autonomous2{
                             /*
                              * Ingest
                              */
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             sh.turnOnIngestor();
                             sh.setRpmBoth(-1000);
                             sh.setConveyorSpeed(-1);
@@ -495,7 +495,7 @@ public class Autonomous2{
                             break;
                         case 12:
                             System.out.println("12");
-                            ar.setPosition(Constants.ARM_ZEROPOSITION);
+                            ar.setPosition(Constants.ARM_BOTTOM);
                             sh.setRpmBoth(0);
                             sh.setConveyorSpeed(0);
                         default:

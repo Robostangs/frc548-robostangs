@@ -137,7 +137,7 @@ public class RobotMain extends IterativeRobot {
         }
 
         /*
-         * Driver shifting
+         * Shifting
          */
         if(xboxDriver.triggerAxis() > .5){
             //Left Trigger Pressed
@@ -156,33 +156,35 @@ public class RobotMain extends IterativeRobot {
         }
         
         /*
-         * Manipulator arm position.
+         * Arm position.
          * Checks to make sure ingestor is not out, where applicable.
          */
-        if(xboxDriver.bButton()){
-             if(!air.getIngestCylinder()){
-                    if(currentManipButton != 3){
-                        arm.setPidTop();
-                        currentManipButton = 3;
-                    }
-                    arm.setPosition(Constants.ARM_TOP);
+        if(xboxDriver.bButton()){                   
+            //Driver Override
+            if(!air.getIngestCylinder()){
+                if(currentManipButton != 3){
+                    arm.setPidTop();
+                    currentManipButton = 3;
                 }
+                arm.setPosition(Constants.ARM_TOP);
+            }
         }else if(Math.abs(xboxManip.rightStickYAxis()) < 0.20){
-            //Manipulator is not using the YAxis2 to manual set
+            //Manipulator is not using the YAxis2 to manual set, use buttons
             if(xboxManip.bButton()){
+                //Manipulator B Button, drop the arm to the bottom
                 if(currentManipButton != 0){
-                    arm.setPidZero();
+                    arm.setPidBottom();
                     currentManipButton = 0;
                 }
-                arm.setPosition(Constants.ARM_ZEROPOSITION);                
-            }
-            else if(xboxManip.aButton()){
+                arm.setPosition(Constants.ARM_BOTTOM);                
+            }else if(xboxManip.aButton()){
+                //Manipulator A Button, move arm to low position
                 if(!air.getIngestCylinder()){
                     if(currentManipButton != 1){
                         arm.setPidBottom();
                         currentManipButton = 1;
                     }
-                    arm.setPosition(Constants.ARM_BOTTOM);
+                    arm.setPosition(Constants.ARM_LOW);
                 }
             }
             else if(xboxManip.xButton()){
@@ -205,16 +207,12 @@ public class RobotMain extends IterativeRobot {
             }else if(xboxManip.triggerAxis() > .5){
                 if(currentManipButton != 4){
                     currentManipButton = 4;
-                    arm.setPidZero();
+                    arm.setPidBottom();
                 }
-                arm.setPosition(Constants.ARM_ZEROPOSITION);  
+                arm.setPosition(Constants.ARM_BOTTOM);  
             }else{
-                //Stay in place if no joystick or buttons
-                //if(arm.pidEnabled()){
-                //    arm.setPosition(arm.getPotentiometer());
-                //}else{
-                    arm.setSpeed(0);  
-                //}
+                //No buttons pressed, stop the arm.
+                arm.setSpeed(0);  
             }
         }else{
             //Set the arm to manual speed

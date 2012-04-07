@@ -26,7 +26,7 @@ public class Arm
      * Return the angle of the arm (degrees)
      */
     public double getAngle(){
-        double angle = (apot.getPotentiometer() - Constants.ARM_BOTTOM) / 3.8;
+        double angle = (apot.getPotentiometer() - Constants.ARM_LOW) / 3.8;
         return angle;
     }
     
@@ -86,13 +86,13 @@ public class Arm
         pid.reset();
         pid.setPID(Constants.ARM_MIDDLE_AKp, Constants.ARM_MIDDLE_AKi, Constants.ARM_MIDDLE_AKd);
     }
+    public void setPidLOW(){
+        pid.reset();
+        pid.setPID(Constants.ARM_LOW_AKp, Constants.ARM_LOW_AKi, Constants.ARM_LOW_AKd);
+    }
     public void setPidBottom(){
         pid.reset();
         pid.setPID(Constants.ARM_BOTTOM_AKp, Constants.ARM_BOTTOM_AKi, Constants.ARM_BOTTOM_AKd);
-    }
-    public void setPidZero(){
-        pid.reset();
-        pid.setPID(Constants.ARM_ZERO_AKp, Constants.ARM_ZERO_AKi, Constants.ARM_ZERO_AKd);
     }
     
     /*

@@ -20,16 +20,16 @@ public class Constants {
         public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
         
-        /*public static final int ARM_BOTTOM = 574;
+        /*public static final int ARM_LOW = 574;
         public static final int ARM_TOP = 786;
         public static final int ARM_MIDDLE = 745;
-        public static final int ARM_ZEROPOSITION = 352;*/
-        public static final int ARM_BOTTOM = 372;
+        public static final int ARM_BOTTOM = 352;*/
+        public static final int ARM_LOW = 372;
         public static final int ARM_TOP = 582;
         public static final int ARM_MIDDLE = 562;
-        public static final int ARM_ZEROPOSITION = 190;
+        public static final int ARM_BOTTOM = 190;
         public static final int ARM_POT_MAX = ARM_TOP + 2;
-        public static final int ARM_POT_MIN = ARM_ZEROPOSITION -2;
+        public static final int ARM_POT_MIN = ARM_BOTTOM -2;
         
         //366, +125 = 269
         //566, -425 = 1231
@@ -37,18 +37,18 @@ public class Constants {
         //Bridge, 3572
         
         //PID constants, competetion
-        public static final double ARM_ZERO_AKp = 0.023;
-        public static final double ARM_ZERO_AKi = 0.000015;
-        public static final double ARM_ZERO_AKd = 0.015;
+        public static final double ARM_BOTTOM_AKp = 0.023;
+        public static final double ARM_BOTTOM_AKi = 0.000015;
+        public static final double ARM_BOTTOM_AKd = 0.015;
         public static final double ARM_TOP_AKp = 0.01;
         public static final double ARM_TOP_AKi = 0.00001;
         public static final double ARM_TOP_AKd = 0.028;
         public static final double ARM_MIDDLE_AKp = 0.008;
         public static final double ARM_MIDDLE_AKi = 0.00001;
         public static final double ARM_MIDDLE_AKd = 0.025;
-        public static final double ARM_BOTTOM_AKp = 0.0165;
-        public static final double ARM_BOTTOM_AKi = 0.00001;
-        public static final double ARM_BOTTOM_AKd = 0.025;
+        public static final double ARM_LOW_AKp = 0.0165;
+        public static final double ARM_LOW_AKi = 0.00001;
+        public static final double ARM_LOW_AKd = 0.025;
 
         public static final int ARM_POT_POS = 2;
         public static final int ARM_JAG_A_POS = 3;
