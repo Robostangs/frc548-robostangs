@@ -8,10 +8,8 @@
 package com.robostangs;
 
 
-import edu.wpi.first.wpilibj.Dashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 
@@ -37,7 +35,6 @@ public class RobotMain extends IterativeRobot {
     private Autonomous2 auton;
     private CustomDashboard dash;
     private boolean seekingTarget = false;
-    private boolean manipulatorRpmControl = true;
     private double voltage = 0;
     private int currentManipButton = 3; //0-3, arm pid config
     private double angleOffset = 0;     //used for centering toward target
@@ -116,24 +113,36 @@ public class RobotMain extends IterativeRobot {
         }
         
         /*
-         * Driver manual rpm speeds
+         * Shooter Rpm Controls
          */
         if(xboxDriver.aButton()){           //Front key rpm
-            manipulatorRpmControl = false;
             shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
             //TODO: Remove
             drive.resetEncoders();
         }else if(xboxDriver.bButton()){     //Front Fender rpm
-            manipulatorRpmControl = false;
             shoot.fenderShot();
         }else if(xboxDriver.xButton()){     //Side fender rpm
-            manipulatorRpmControl = false;
             shoot.setRpmBackspin(Constants.SHOOTER_SIDE_FENDER_RPM);
         }else if(xboxDriver.yButton()){     //Front fender rpm
-            manipulatorRpmControl = false;
             shoot.fenderShot();
         }else{
-            manipulatorRpmControl = true;
+            //Manipulator
+            if(xboxManip.triggerAxis() < -.2){
+                //Right Trigger, manual shoot
+                shoot.setRpmBoth(-xboxManip.triggerAxis() * 2200);        //800-2000
+            }else if(xboxManip.triggerAxis() < -.2){
+                //Left Trigger, shooter ingesting
+                shoot.setRpmBackspin(-xboxManip.triggerAxis() * 2300 + 440);        //900-2740
+            }else{
+                if(seekingTarget && drive.onTarget()){
+                    shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage); 
+                }
+                if(xboxDriver.lBumper()){
+                    shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage);    
+                }else{
+                    shoot.setRpmBoth(0);
+                }
+            }
         }
 
         /*
@@ -188,6 +197,7 @@ public class RobotMain extends IterativeRobot {
                 }
             }
             else if(xboxManip.xButton()){
+                //Manipulator X Button, move arm to middle position
                 if(!air.getIngestCylinder()){
                     if(currentManipButton != 2){
                         arm.setPidMiddle();
@@ -197,6 +207,7 @@ public class RobotMain extends IterativeRobot {
                 }
             }
             else if(xboxManip.yButton()){
+                //Manipulator Y Button, move arm to top position
                 if(!air.getIngestCylinder()){
                     if(currentManipButton != 3){
                         arm.setPidTop();
@@ -205,6 +216,7 @@ public class RobotMain extends IterativeRobot {
                     arm.setPosition(Constants.ARM_TOP);
                 }
             }else if(xboxManip.triggerAxis() > .5){
+                //Manipulator Left Trigger, keep arm at bottom while ingesting.
                 if(currentManipButton != 4){
                     currentManipButton = 4;
                     arm.setPidBottom();
@@ -215,69 +227,49 @@ public class RobotMain extends IterativeRobot {
                 arm.setSpeed(0);  
             }
         }else{
-            //Set the arm to manual speed
+            //Manipulatory is using right y axis to move arm manually
             arm.setSpeed(-xboxManip.rightStickYAxis());
         }
         
         /*
-         * Manipulator conveyor controls
+         * Conveyor controls
          */
         if(xboxManip.rBumper()){
             if(arm.getAngle() > 52.5){
+                //The arm is at the top, we are at the fender, expell quickly
                 shoot.setConveyorSpeed(.7);
             }else{
+                //Arm is not at top, don't shoot too quickly so shooter
+                //wheels have time to spin up
                 shoot.setConveyorSpeed(.4);
             }
         }else if(xboxManip.lBumper()){
+            //Run the conveyor in reverse
+            shoot.setConveyorSpeed(-1);
+        }else if(xboxManip.triggerAxis() > .2){
+            //Manipulator is using the ingest button
             shoot.setConveyorSpeed(-1);
         }else{
+            //TODO: Check for a certain arm speed to retain balls -1
             shoot.setConveyorSpeed(0);
         }
-        
 
         /*
-        * Manipulator ingesting and shooting
-        */
+         * Ingestor controls
+         * Will only deploy ingestor if arm is low enough to not break perimeter
+         */
         if(xboxManip.triggerAxis() > .2){
             //Left trigger is pressed
             if(arm.getAngle() < Constants.INGESTOR_ARM_MAX_ANGLE){
                 air.setIngestCylinder(true);
                 shoot.turnOnIngestor();
-                shoot.setConveyorSpeed(-1);
-            }
-            if(manipulatorRpmControl){
-                shoot.setRpmBoth(-xboxManip.triggerAxis() * 2200);        //800-2000
-            }
-        }else if(xboxManip.triggerAxis() < -.2){
-            //Right trigger is pressed
-            air.setIngestCylinder(false);
-            shoot.turnOffIngestor();
-            if(manipulatorRpmControl){
-                shoot.setRpmBackspin(-xboxManip.triggerAxis() * 2300 + 440);        //900-2740
+            }else{
+                air.setIngestCylinder(false);
+                shoot.turnOffIngestor();
             }
         }else{
             air.setIngestCylinder(false);
             shoot.turnOffIngestor();
-/*
-            if(seekingTarget){// && drive.onTarget()){  
-                //Automatic shooting speed (if no triggers pressed)
-                if(manipulatorRpmControl){
-                    shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage);
-                }
-*/
-            if(xboxDriver.lBumper()){
-                //Override target seeking
-                shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage);
-                //drive.stop();
-            }else{
-                if(manipulatorRpmControl){
-                    if(shoot.getRpmOffset() == 0){
-                        shoot.setRpmBoth(0);
-                    }else{
-                        shoot.setRpmBoth(0);
-                    }
-                }
-            }
         }
 
         /*
@@ -306,6 +298,7 @@ public class RobotMain extends IterativeRobot {
             }
             drive.driveXbox(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
         }else if(xboxDriver.rBumper()){
+            //TODO: Improve
             System.out.println("TargetXCenter: " + drive.axisCam.getTargetCenterX() + " TargetYCenter: " + drive.axisCam.getTargetCenterY() + " Heading: " + drive.axisCam.getHeading() + " Distance: " + drive.axisCam.getDistance());
             if(!seekingTarget){
                 angleOffset = drive.getGyro();
@@ -319,7 +312,6 @@ public class RobotMain extends IterativeRobot {
                 } catch (NIVisionException ex) {
                     ex.printStackTrace();
                 }
-                manipulatorRpmControl = false;
             }
             
             if(drive.onTarget()){
@@ -328,30 +320,22 @@ public class RobotMain extends IterativeRobot {
                 drive.info();
                 drive.stop();
                 drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis(), angleOffset);
-                                manipulatorRpmControl = false;
-
             }else if(onTarget){
                 System.out.println("Aligned");
                 onTarget = true;
                 drive.info();
                 drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis(), angleOffset);
-                                manipulatorRpmControl = false;
-
             }else{
                 System.out.println("Still looking");
                 double target = drive.axisCam.getHeading() + angleOffset;
                 drive.info();
                 drive.setPosition(drive.axisCam.getHeading() + angleOffset);
-                                manipulatorRpmControl = false;
-
             }
             
         }else{
             //We are not rectangle tracking, drive normally
             seekingTarget = false;
             drive.driveXbox(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
-                            manipulatorRpmControl = true;
-
         }
     }
 }
