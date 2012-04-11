@@ -218,7 +218,6 @@ public class Autonomous2{
                             step++;
                             break;
                         case 3:
-                             //TODO: write distance, rpms
                            pn.setGear(Constants.LOW_SPEED);
                            check(.5, .5);
                            if(Math.abs(dt.getLeftEncoder()) >= 1.55){

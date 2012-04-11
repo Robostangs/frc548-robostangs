@@ -93,9 +93,7 @@ public class RobotMain extends IterativeRobot {
          * Check Shooter Jaguars
          */
         shoot.checkShooterJags();
-        
-        //Log.getInstance().write(Timer.getFPGATimestamp() + " , " + drive.getRightCount() + " , " + drive.getLeftCount() + " , " + drive.getLeftEncoder() + " , " + drive.getRightEncoder());
-        
+                
         //get the battery voltage
         voltage = DriverStation.getInstance().getBatteryVoltage();
         
@@ -117,8 +115,6 @@ public class RobotMain extends IterativeRobot {
          */
         if(xboxDriver.aButton()){           //Front key rpm
             shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
-            //TODO: Remove
-            drive.resetEncoders();
         }else if(xboxDriver.bButton()){     //Front Fender rpm
             shoot.fenderShot();
         }else if(xboxDriver.xButton()){     //Side fender rpm
@@ -274,7 +270,7 @@ public class RobotMain extends IterativeRobot {
 
         /*
          * Manipulator ramp controls, don't exist yet
-         * TODO: Check for is it time to deploy ramps?
+         * //Check for is it time to deploy ramps?
          *
         if(xboxManip.rBumper()){
             air.setRampCylinder(true);
@@ -327,7 +323,6 @@ public class RobotMain extends IterativeRobot {
                 drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis(), angleOffset);
             }else{
                 System.out.println("Still looking");
-                double target = drive.axisCam.getHeading() + angleOffset;
                 drive.info();
                 drive.setPosition(drive.axisCam.getHeading() + angleOffset);
             }
