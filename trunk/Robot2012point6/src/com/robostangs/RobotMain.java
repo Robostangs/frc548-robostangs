@@ -7,7 +7,6 @@
 
 package com.robostangs;
 
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -54,7 +53,6 @@ public class RobotMain extends IterativeRobot {
         shoot = new Shooter();
         auton = new Autonomous2(drive, shoot, arm, air);
         dash = new CustomDashboard();
-
         drive.resetEncoders();
     }
     public void autonomousInit(){
@@ -67,7 +65,6 @@ public class RobotMain extends IterativeRobot {
     public void autonomousPeriodic() {
         auton.run();
         //Log.getInstance().write(Timer.getFPGATimestamp() + " , " + drive.getRightCount() + " , " + drive.getLeftCount() + " , " + drive.getLeftEncoder() + " , " + drive.getRightEncoder());
-
     }
     
     public void disabledInit(){
@@ -179,8 +176,9 @@ public class RobotMain extends IterativeRobot {
         
         /*
          * Ingestor debug mode
-         *
-         * TOOD: get R3 Button*/
+         * Does not drop arm while ingesting if ingestorDebugMode
+         * 
+         * TODO: get R3 Button*/
         if(xboxManip.backButton()){
             System.out.println("debug off");
             ingestorDebugMode = false;
@@ -243,11 +241,11 @@ public class RobotMain extends IterativeRobot {
                 }
             }else if(xboxManip.triggerAxis() > .5){
                 //Manipulator Left Trigger, keep arm at bottom while ingesting.
-                if(currentManipButton != 4 && !ingestorDebugMode){
-                    currentManipButton = 4;
-                    arm.setPidBottom();
-                }
                 if(!ingestorDebugMode){
+                    if(currentManipButton != 4){
+                        arm.setPidBottom();
+                        currentManipButton = 4;
+                    }
                     arm.setPosition(Constants.ARM_BOTTOM);  
                 }
             }else{
@@ -299,17 +297,15 @@ public class RobotMain extends IterativeRobot {
             air.setIngestCylinder(false);
             shoot.turnOffIngestor();
         }
-
-        /*
-         * Manipulator ramp controls, don't exist yet
-         * //Check for is it time to deploy ramps?
-         *
-        if(xboxManip.rBumper()){
-            air.setRampCylinder(true);
-        }else{
-            air.setRampCylinder(false);
-        }*/
         
+        /*
+         * 'Stinger' Controls
+         */
+        if(xboxDriver.rightJoystickButton()){
+            //TODO: Pneumatics deploy stinger
+        }else if(xboxManip.leftJoystickButton()){
+            //TODO: Pneumatics retract stinger
+        }
         
         /*
          * lbumper sets distance to rpm, 
