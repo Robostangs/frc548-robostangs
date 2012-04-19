@@ -5,7 +5,6 @@ public class Constants {
     /*
      * Enable Constants
      */
-        public static final boolean USE_CAMERA = true;  //Enable camera
         public static final boolean USE_CAN = true;     //Enable CANJaguars
     /*
      * Camera
@@ -20,14 +19,19 @@ public class Constants {
         public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
         
-        /*public static final int ARM_LOW = 574;
+        /*
+         * //Comp
+        public static final int ARM_LOW = 574;
         public static final int ARM_TOP = 786;
         public static final int ARM_MIDDLE = 745;
-        public static final int ARM_BOTTOM = 352;*/
+        public static final int ARM_BOTTOM = 348;*/
+        
+        //Practice
         public static final int ARM_LOW = 372;
         public static final int ARM_TOP = 582;
         public static final int ARM_MIDDLE = 562;
         public static final int ARM_BOTTOM = 190;
+        
         public static final int ARM_POT_MAX = ARM_TOP + 2;
         public static final int ARM_POT_MIN = ARM_BOTTOM -2;
         
@@ -37,17 +41,17 @@ public class Constants {
         //Bridge, 3572
         
         //PID constants, competetion
-        public static final double ARM_BOTTOM_AKp = 0.023;
+        public static final double ARM_BOTTOM_AKp = 0.01;//0.023;
         public static final double ARM_BOTTOM_AKi = 0.000015;
-        public static final double ARM_BOTTOM_AKd = 0.015;
+        public static final double ARM_BOTTOM_AKd = 0.012;//015
         public static final double ARM_TOP_AKp = 0.01;
         public static final double ARM_TOP_AKi = 0.00001;
         public static final double ARM_TOP_AKd = 0.028;
         public static final double ARM_MIDDLE_AKp = 0.008;
-        public static final double ARM_MIDDLE_AKi = 0.00001;
+        public static final double ARM_MIDDLE_AKi = 0.000015;
         public static final double ARM_MIDDLE_AKd = 0.025;
         public static final double ARM_LOW_AKp = 0.0165;
-        public static final double ARM_LOW_AKi = 0.00001;
+        public static final double ARM_LOW_AKi = 0.000015;
         public static final double ARM_LOW_AKd = 0.025;
 
         public static final int ARM_POT_POS = 2;
@@ -71,8 +75,8 @@ public class Constants {
         public static final double SKd = 0;
         //TODO: Get values
         public static final double SHOOTER_FRONT_FENDER_RPM = 1162.49046;
-        public static final double SHOOTER_SIDE_FENDER_RPM = 240;
-        public static final double SHOOTER_FRONT_KEY_RPM = 1362.1674;
+        public static final double SHOOTER_SIDE_KEY_RPM = 375;
+        public static final double SHOOTER_FRONT_KEY_RPM = 325;
         public static final double SHOOTER_BACK_KEY_RPM = 1735.8208;
         //TODO: Check
         public static final int INGESTOR_ARM_MAX_ANGLE = -45;

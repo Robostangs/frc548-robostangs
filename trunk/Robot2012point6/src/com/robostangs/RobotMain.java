@@ -10,6 +10,7 @@ package com.robostangs;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 
@@ -39,6 +40,10 @@ public class RobotMain extends IterativeRobot {
     private int currentManipButton = 3; //0-3, arm pid config
     private double angleOffset = 0;     //used for centering toward target
     private boolean onTarget = false;
+    private double lowestVoltage = 15.0f;
+    private double lastVoltageTime = 0;
+    private double lowestVoltageTime = 0;
+    private boolean ingestorDebugMode = false;  //if true, dont drop while ingesting for human loading 
     
     public void robotInit() {
         air = new Pneumatics();
@@ -80,10 +85,11 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
+        System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
         //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
         //System.out.println("L: " + drive.getLeftCount() + " R: " + drive.getRightCount());
         //System.out.println("Bottom: " + shoot.getBottomRpm() + " " + " Top: " + shoot.getTopRpm());
+        //System.out.println("Angle: " + drive.getGyro());
         /*
          * Check the air pressure, turn on compressor if nessisary.
          */
@@ -94,8 +100,19 @@ public class RobotMain extends IterativeRobot {
          */
         shoot.checkShooterJags();
                 
-        //get the battery voltage
+        //get the battery voltage        
         voltage = DriverStation.getInstance().getBatteryVoltage();
+        
+        if(voltage < lowestVoltage){
+            lowestVoltage = voltage;
+            lowestVoltageTime = Timer.getFPGATimestamp();
+        }
+        
+        //log the lowest recorded voltage every 5 seconds
+        if(Timer.getFPGATimestamp() > (lastVoltageTime + 5)){
+            Log.getInstance().write("Lowest Voltage, " + lowestVoltage + " , Recorded at " + lowestVoltageTime);
+            lastVoltageTime = Timer.getFPGATimestamp();
+        }
         
         //update dashboard
         dash.updateDashboard(drive.onTarget(), Double.toString((int)drive.axisCam.getDistance()), Double.toString((int)shoot.getTargetRpm()), Double.toString((int)shoot.getTopRpm()), Double.toString((int)shoot.getRpmOffset()), Double.toString(arm.getAngle()));
@@ -113,12 +130,12 @@ public class RobotMain extends IterativeRobot {
         /*
          * Shooter Rpm Controls
          */
-        if(xboxDriver.aButton()){           //Front key rpm
-            shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
-        }else if(xboxDriver.bButton()){     //Front Fender rpm
+        if(xboxDriver.aButton()){           //Fender SHot
             shoot.fenderShot();
-        }else if(xboxDriver.xButton()){     //Side fender rpm
-            shoot.setRpmBackspin(Constants.SHOOTER_SIDE_FENDER_RPM);
+        }else if(xboxDriver.bButton()){     //Side key rpm
+            shoot.setRpmBackspin(Constants.SHOOTER_SIDE_KEY_RPM);
+        }else if(xboxDriver.xButton()){     //Front fender rpm
+            shoot.setRpmBackspin(Constants.SHOOTER_FRONT_KEY_RPM);
         }else if(xboxDriver.yButton()){     //Front fender rpm
             shoot.fenderShot();
         }else{
@@ -126,9 +143,9 @@ public class RobotMain extends IterativeRobot {
             if(xboxManip.triggerAxis() < -.2){
                 //Right Trigger, manual shoot
                 shoot.setRpmBoth(-xboxManip.triggerAxis() * 2200);        //800-2000
-            }else if(xboxManip.triggerAxis() < -.2){
+            }else if(xboxManip.triggerAxis() > .2){
                 //Left Trigger, shooter ingesting
-                shoot.setRpmBackspin(-xboxManip.triggerAxis() * 2300 + 440);        //900-2740
+                shoot.setRpmBoth(-xboxManip.triggerAxis() * 2300 + 440);        //900-2740
             }else{
                 if(seekingTarget && drive.onTarget()){
                     shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage); 
@@ -161,9 +178,21 @@ public class RobotMain extends IterativeRobot {
         }
         
         /*
+         * Ingestor debug mode
+         *
+         * TOOD: get R3 Button*/
+        if(xboxManip.backButton()){
+            System.out.println("debug off");
+            ingestorDebugMode = false;
+        }else if(xboxManip.startButton()){
+            System.out.println("debug on");
+            ingestorDebugMode = true;
+        }
+        
+        /*
          * Arm position.
          * Checks to make sure ingestor is not out, where applicable.
-         */
+         *
         if(xboxDriver.bButton()){                   
             //Driver Override
             if(!air.getIngestCylinder()){
@@ -173,7 +202,8 @@ public class RobotMain extends IterativeRobot {
                 }
                 arm.setPosition(Constants.ARM_TOP);
             }
-        }else if(Math.abs(xboxManip.rightStickYAxis()) < 0.20){
+        }else */
+        if(Math.abs(xboxManip.rightStickYAxis()) < 0.20){
             //Manipulator is not using the YAxis2 to manual set, use buttons
             if(xboxManip.bButton()){
                 //Manipulator B Button, drop the arm to the bottom
@@ -213,11 +243,13 @@ public class RobotMain extends IterativeRobot {
                 }
             }else if(xboxManip.triggerAxis() > .5){
                 //Manipulator Left Trigger, keep arm at bottom while ingesting.
-                if(currentManipButton != 4){
+                if(currentManipButton != 4 && !ingestorDebugMode){
                     currentManipButton = 4;
                     arm.setPidBottom();
                 }
-                arm.setPosition(Constants.ARM_BOTTOM);  
+                if(!ingestorDebugMode){
+                    arm.setPosition(Constants.ARM_BOTTOM);  
+                }
             }else{
                 //No buttons pressed, stop the arm.
                 arm.setSpeed(0);  
@@ -284,13 +316,15 @@ public class RobotMain extends IterativeRobot {
          * rbumper sets distance to rpm and attempts to center.
          */
         if(xboxDriver.lBumper()){
-            seekingTarget = true;
-            try {
-                drive.axisCam.getImage();
-            } catch (AxisCameraException ex) {
-                ex.printStackTrace();
-            } catch (NIVisionException ex) {
-                ex.printStackTrace();
+            if(!seekingTarget){
+                seekingTarget = true;
+                try {
+                    drive.axisCam.getImage();
+                } catch (AxisCameraException ex) {
+                    ex.printStackTrace();
+                } catch (NIVisionException ex) {
+                    ex.printStackTrace();
+                }     
             }
             drive.driveXbox(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
         }else if(xboxDriver.rBumper()){
@@ -316,17 +350,11 @@ public class RobotMain extends IterativeRobot {
                 drive.info();
                 drive.stop();
                 drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis(), angleOffset);
-            }else if(onTarget){
-                System.out.println("Aligned");
-                onTarget = true;
-                drive.info();
-                drive.driveStraight(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis(), angleOffset);
             }else{
                 System.out.println("Still looking");
                 drive.info();
                 drive.setPosition(drive.axisCam.getHeading() + angleOffset);
             }
-            
         }else{
             //We are not rectangle tracking, drive normally
             seekingTarget = false;
