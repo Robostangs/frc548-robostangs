@@ -32,12 +32,12 @@ public class Shooter
     public void configJags(){
         try {
             topMotor.changeControlMode(CANJaguar.ControlMode.kSpeed);
-            topMotor.setPID(Constants.SKp, Constants.SKi, Constants.SKd);
+            topMotor.setPID(Constants.TSKp, Constants.TSKi, Constants.TSKd);
             topMotor.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
             topMotor.configEncoderCodesPerRev(360);
-           
+                       
             bottomMotor.changeControlMode(CANJaguar.ControlMode.kSpeed);
-            bottomMotor.setPID(Constants.SKp, Constants.SKi, Constants.SKd);
+            bottomMotor.setPID(Constants.BSKp, Constants.BSKi, Constants.BSKd);
             bottomMotor.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
             bottomMotor.configEncoderCodesPerRev(360);
             
@@ -117,7 +117,7 @@ public class Shooter
      */
     public void setRpmBackspin(double rpm){
         targetRpm = rpm+rpmOffset;
-        try{ 
+        try{
             topMotor.setX(targetRpm);
             bottomMotor.setX(3100);
         } catch (CANTimeoutException ex) {
@@ -132,6 +132,8 @@ public class Shooter
         targetRpm = rpm+rpmOffset;
         try{
             topMotor.setX(targetRpm);
+            
+            
             bottomMotor.setX(targetRpm);
         }catch(CANTimeoutException ex){
             ex.printStackTrace();
@@ -202,6 +204,18 @@ public class Shooter
             ex.printStackTrace();
         }
         return x;
+    }
+    
+    /*
+     * return top shooter voltage
+     */
+    public double topVoltage(){
+        try {
+            return topMotor.getOutputVoltage();
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
     
     /*

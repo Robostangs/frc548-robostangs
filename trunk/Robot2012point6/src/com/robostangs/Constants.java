@@ -29,8 +29,8 @@ public class Constants {
         //Practice
         public static final int ARM_LOW = 372;
         public static final int ARM_TOP = 582;
-        public static final int ARM_MIDDLE = 562;
-        public static final int ARM_BOTTOM = 190;
+        public static final int ARM_MIDDLE = 545;//562;
+        public static final int ARM_BOTTOM = 182;
         
         public static final int ARM_POT_MAX = ARM_TOP + 2;
         public static final int ARM_POT_MIN = ARM_BOTTOM -2;
@@ -70,13 +70,18 @@ public class Constants {
         public static final int SHOOTER_CONVEYOR_VIC = 1;
         public static final int SHOOTER_INGESTOR_REL = 1;
         //PID constants
-        public static final double SKp = .2;
-        public static final double SKi = 1;
-        public static final double SKd = 0;
+        public static final double TSKp = .5;//.2;
+        public static final double TSKi = 0.05;//1;
+        public static final double TSKd = 0;//0;
+        
+        public static final double BSKp = .2;//.2;
+        public static final double BSKi = 1;//1;
+        public static final double BSKd = 0;//0;
+        
         //TODO: Get values
         public static final double SHOOTER_FRONT_FENDER_RPM = 1162.49046;
-        public static final double SHOOTER_SIDE_KEY_RPM = 375;
-        public static final double SHOOTER_FRONT_KEY_RPM = 325;
+        public static final double SHOOTER_SIDE_KEY_RPM = 435;//375;
+        public static final double SHOOTER_FRONT_KEY_RPM = 405;
         public static final double SHOOTER_BACK_KEY_RPM = 1735.8208;
         //TODO: Check
         public static final int INGESTOR_ARM_MAX_ANGLE = -45;

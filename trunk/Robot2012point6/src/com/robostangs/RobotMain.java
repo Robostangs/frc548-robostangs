@@ -82,15 +82,21 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
+        //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
         //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
         //System.out.println("L: " + drive.getLeftCount() + " R: " + drive.getRightCount());
         //System.out.println("Bottom: " + shoot.getBottomRpm() + " " + " Top: " + shoot.getTopRpm());
         //System.out.println("Angle: " + drive.getGyro());
+        //Log.getInstance().write(Double.toString(shoot.topVoltage()));
+        //System.out.println("VoltageShooter:" + shoot.topVoltage());
         /*
          * Check the air pressure, turn on compressor if nessisary.
          */
-        air.checkPressure();
+        if(shoot.getTargetRpm() == 0){
+            air.checkPressure();
+        }else{
+            air.stopCompressor();
+        }
         
         /*
          * Check Shooter Jaguars
@@ -106,10 +112,10 @@ public class RobotMain extends IterativeRobot {
         }
         
         //log the lowest recorded voltage every 5 seconds
-        if(Timer.getFPGATimestamp() > (lastVoltageTime + 5)){
-            Log.getInstance().write("Lowest Voltage, " + lowestVoltage + " , Recorded at " + lowestVoltageTime);
-            lastVoltageTime = Timer.getFPGATimestamp();
-        }
+        //if(Timer.getFPGATimestamp() > (lastVoltageTime + 5)){
+        //    Log.getInstance().write("Lowest Voltage, " + lowestVoltage + " , Recorded at " + lowestVoltageTime);
+        //    lastVoltageTime = Timer.getFPGATimestamp();
+        //}
         
         //update dashboard
         dash.updateDashboard(drive.onTarget(), Double.toString((int)drive.axisCam.getDistance()), Double.toString((int)shoot.getTargetRpm()), Double.toString((int)shoot.getTopRpm()), Double.toString((int)shoot.getRpmOffset()), Double.toString(arm.getAngle()));
@@ -261,13 +267,14 @@ public class RobotMain extends IterativeRobot {
          * Conveyor controls
          */
         if(xboxManip.rBumper()){
+            Log.getInstance().write(Timer.getFPGATimestamp() + " , "  + Double.toString(shoot.getTopRpm()));
             if(arm.getAngle() > 52.5){
                 //The arm is at the top, we are at the fender, expell quickly
                 shoot.setConveyorSpeed(.7);
             }else{
                 //Arm is not at top, don't shoot too quickly so shooter
                 //wheels have time to spin up
-                shoot.setConveyorSpeed(.4);
+                shoot.setConveyorSpeed(.6);
             }
         }else if(xboxManip.lBumper()){
             //Run the conveyor in reverse

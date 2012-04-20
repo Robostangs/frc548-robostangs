@@ -38,6 +38,10 @@ public class Pneumatics {
             compressor.set(Relay.Value.kOn);
         }
     }
+    
+    public void stopCompressor(){
+        compressor.set(Relay.Value.kOn);
+    }
    
     /*
      * Enable/disable ramps

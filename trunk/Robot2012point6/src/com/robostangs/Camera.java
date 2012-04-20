@@ -75,8 +75,8 @@ public class Camera implements PIDSource{
             
             //write then free images
             System.out.println("Saving images");
-            image.write("../../orig" + Timer.getFPGATimestamp() + ".jpg");
-            convexHullImage.write("../../cvhi" + Timer.getFPGATimestamp() + ".jpg");
+            image.write("../../images/orig" + Timer.getFPGATimestamp() + ".jpg");
+            convexHullImage.write("../../images/cvhi" + Timer.getFPGATimestamp() + ".jpg");
             Log.getInstance().write("Just attemped to save images at: " + Timer.getFPGATimestamp());
             
             image.free();
