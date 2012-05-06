@@ -43,6 +43,36 @@ public class RobotMain extends IterativeRobot {
     private double lastVoltageTime = 0;
     private double lowestVoltageTime = 0;
     private boolean ingestorDebugMode = false;  //if true, dont drop while ingesting for human loading 
+    private debugOptions debugOpt;
+    private boolean leftTriggerStart = false;   //used to delay turning on ingestor before dropping arm
+    private double leftTriggerDelayTime = 0;
+    
+    /*
+     * Class acting as a struct to hold debugging values
+     */
+    public class debugOptions{
+        public boolean gyro = false;
+        public boolean shooterWheels = false;
+        public boolean armAngle = false;
+        public boolean armPot = false;
+        public boolean voltage = false;
+        
+        public void allOff(){
+            gyro = false;
+            shooterWheels = false;
+            armAngle = false;
+            armPot = false;
+            voltage = false;
+        }
+        
+        public void allOn(){
+            gyro = true;
+            shooterWheels = true;
+            armAngle = true;
+            armPot = true;
+            voltage = true;
+        }
+    }
     
     public void robotInit() {
         air = new Pneumatics();
@@ -54,7 +84,11 @@ public class RobotMain extends IterativeRobot {
         auton = new Autonomous2(drive, shoot, arm, air);
         dash = new CustomDashboard();
         drive.resetEncoders();
+        debugOpt = new debugOptions();
+        debugOpt.allOff();
+        debugOpt.shooterWheels = true;
     }
+    
     public void autonomousInit(){
         auton.init();
     }
@@ -64,7 +98,6 @@ public class RobotMain extends IterativeRobot {
      */
     public void autonomousPeriodic() {
         auton.run();
-        //Log.getInstance().write(Timer.getFPGATimestamp() + " , " + drive.getRightCount() + " , " + drive.getLeftCount() + " , " + drive.getLeftEncoder() + " , " + drive.getRightEncoder());
     }
     
     public void disabledInit(){
@@ -77,18 +110,37 @@ public class RobotMain extends IterativeRobot {
         arm.stop();
         arm.setOutRange(-1,1);
     }
+    
+    /*
+     * Write debug options to log file
+     */
+    public void debug(){
+        String output = null;
+        if(debugOpt.armPot){
+            output += "Pot, " + arm.getPotentiometer() + ", ";
+        }
+        if(debugOpt.armAngle){
+            output += " Angle, " + arm.getAngle() + ", ";
+        }
+        if(debugOpt.shooterWheels){
+            output += " Top, " + shoot.getTopRpm() + ", Bottom, " + shoot.getBottomRpm() + ", ";
+        }
+        if(debugOpt.gyro){
+            output += " Gyro, " + drive.getGyro() + ", ";
+        }
+        if(debugOpt.voltage){
+            output += " Volts, " + DriverStation.getInstance().getBatteryVoltage();
+        }
+        
+        if(output != null) Log.getInstance().write(Timer.getFPGATimestamp() + ", " + output);
+    }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        //System.out.println("Arm angle: " + arm.getAngle() + " pot: " + arm.getPotentiometer());// + " potV: " + arm.getPotVoltage() + " distance: " + drive.axisCam.getDistance() + " TargetRpm: " + shoot.getTargetRpm() + " offset: " + shoot.getRpmOffset());
-        //System.out.println("LeftEncoder: " + drive.getLeftEncoder() + " Right Encoder: " + drive.getRightEncoder() + " gyro: " + drive.getGyro());
-        //System.out.println("L: " + drive.getLeftCount() + " R: " + drive.getRightCount());
-        //System.out.println("Bottom: " + shoot.getBottomRpm() + " " + " Top: " + shoot.getTopRpm());
-        //System.out.println("Angle: " + drive.getGyro());
-        //Log.getInstance().write(Double.toString(shoot.topVoltage()));
-        //System.out.println("VoltageShooter:" + shoot.topVoltage());
+        System.out.println(arm.getPower());
+        
         /*
          * Check the air pressure, turn on compressor if nessisary.
          */
@@ -105,18 +157,7 @@ public class RobotMain extends IterativeRobot {
                 
         //get the battery voltage        
         voltage = DriverStation.getInstance().getBatteryVoltage();
-        
-        if(voltage < lowestVoltage){
-            lowestVoltage = voltage;
-            lowestVoltageTime = Timer.getFPGATimestamp();
-        }
-        
-        //log the lowest recorded voltage every 5 seconds
-        //if(Timer.getFPGATimestamp() > (lastVoltageTime + 5)){
-        //    Log.getInstance().write("Lowest Voltage, " + lowestVoltage + " , Recorded at " + lowestVoltageTime);
-        //    lastVoltageTime = Timer.getFPGATimestamp();
-        //}
-        
+
         //update dashboard
         dash.updateDashboard(drive.onTarget(), Double.toString((int)drive.axisCam.getDistance()), Double.toString((int)shoot.getTargetRpm()), Double.toString((int)shoot.getTopRpm()), Double.toString((int)shoot.getRpmOffset()), Double.toString(arm.getAngle()));
             
@@ -153,11 +194,11 @@ public class RobotMain extends IterativeRobot {
                 if(seekingTarget && drive.onTarget()){
                     shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage); 
                 }
-                if(xboxDriver.lBumper()){
+                /*if(xboxDriver.lBumper()){
                     shoot.setRpmFromDistance(drive.axisCam.getDistance(), voltage);    
-                }else{
+                }else{*/
                     shoot.setRpmBoth(0);
-                }
+                //}
             }
         }
 
@@ -170,9 +211,9 @@ public class RobotMain extends IterativeRobot {
         }else if (xboxDriver.triggerAxis() < -.5){
             //Right Trigger Pressed
             air.setGear(Constants.LOW_SPEED);
-        }else if (xboxDriver.rBumper()){
-            air.setGear(Constants.LOW_SPEED);
-        }else{
+        }/*else if (xboxDriver.rBumper()){
+            air.setGear(Constants.LOW_SPEED);*/
+        else{
             if(arm.getAngle()<-40){
                 air.setGear(!Constants.LOW_SPEED);
             }else{
@@ -196,17 +237,9 @@ public class RobotMain extends IterativeRobot {
         /*
          * Arm position.
          * Checks to make sure ingestor is not out, where applicable.
-         *
-        if(xboxDriver.bButton()){                   
-            //Driver Override
-            if(!air.getIngestCylinder()){
-                if(currentManipButton != 3){
-                    arm.setPidTop();
-                    currentManipButton = 3;
-                }
-                arm.setPosition(Constants.ARM_TOP);
-            }
-        }else */
+         * If manipulator presses left trigger, arm will drop, unless at
+         * feeder station position (A, ARM_LOW)
+         */
         if(Math.abs(xboxManip.rightStickYAxis()) < 0.20){
             //Manipulator is not using the YAxis2 to manual set, use buttons
             if(xboxManip.bButton()){
@@ -246,13 +279,16 @@ public class RobotMain extends IterativeRobot {
                     arm.setPosition(Constants.ARM_TOP);
                 }
             }else if(xboxManip.triggerAxis() > .5){
-                //Manipulator Left Trigger, keep arm at bottom while ingesting.
+                //Manipulator Left Trigger, keep arm at bottom while ingesting
+                //if not at feeder station
                 if(!ingestorDebugMode){
-                    if(currentManipButton != 4){
-                        arm.setPidBottom();
-                        currentManipButton = 4;
+                    if(currentManipButton !=1 ){
+                        if(currentManipButton != 4){
+                            arm.setPidBottom();
+                            currentManipButton = 4;
+                        }
+                        arm.setPosition(Constants.ARM_BOTTOM);  
                     }
-                    arm.setPosition(Constants.ARM_BOTTOM);  
                 }
             }else{
                 //No buttons pressed, stop the arm.
@@ -267,14 +303,12 @@ public class RobotMain extends IterativeRobot {
          * Conveyor controls
          */
         if(xboxManip.rBumper()){
-            Log.getInstance().write(Timer.getFPGATimestamp() + " , "  + Double.toString(shoot.getTopRpm()));
             if(arm.getAngle() > 52.5){
-                //The arm is at the top, we are at the fender, expell quickly
-                shoot.setConveyorSpeed(.7);
+                //fender
+                shoot.setConveyorSpeed(.5);
             }else{
-                //Arm is not at top, don't shoot too quickly so shooter
                 //wheels have time to spin up
-                shoot.setConveyorSpeed(.6);
+                shoot.setConveyorSpeed(.5);
             }
         }else if(xboxManip.lBumper()){
             //Run the conveyor in reverse
@@ -282,6 +316,8 @@ public class RobotMain extends IterativeRobot {
         }else if(xboxManip.triggerAxis() > .2){
             //Manipulator is using the ingest button
             shoot.setConveyorSpeed(-1);
+        }else if(Math.abs(arm.getPower()) > .075){
+            shoot.setConveyorSpeed(-.6);
         }else{
             //TODO: Check for a certain arm speed to retain balls -1
             shoot.setConveyorSpeed(0);
@@ -295,12 +331,19 @@ public class RobotMain extends IterativeRobot {
             //Left trigger is pressed
             if(arm.getAngle() < Constants.INGESTOR_ARM_MAX_ANGLE){
                 air.setIngestCylinder(true);
-                shoot.turnOnIngestor();
+                if(!leftTriggerStart){
+                    leftTriggerStart = true;
+                    leftTriggerDelayTime = Timer.getFPGATimestamp();
+                }else if((Timer.getFPGATimestamp() - leftTriggerDelayTime) > .25){
+                    shoot.turnOnIngestor();
+                }
             }else{
                 air.setIngestCylinder(false);
                 shoot.turnOffIngestor();
             }
         }else{
+                leftTriggerStart = false;
+                leftTriggerDelayTime = Timer.getFPGATimestamp();
             air.setIngestCylinder(false);
             shoot.turnOffIngestor();
         }
@@ -308,16 +351,16 @@ public class RobotMain extends IterativeRobot {
         /*
          * 'Stinger' Controls
          */
-        if(xboxDriver.rightJoystickButton()){
-            //TODO: Pneumatics deploy stinger
-        }else if(xboxManip.leftJoystickButton()){
-            //TODO: Pneumatics retract stinger
+        if(xboxDriver.rBumper()){
+            air.setRampCylinder(true);
+        }else if(xboxDriver.lBumper()){
+            air.setRampCylinder(false);
         }
         
         /*
          * lbumper sets distance to rpm, 
          * rbumper sets distance to rpm and attempts to center.
-         */
+         *
         if(xboxDriver.lBumper()){
             if(!seekingTarget){
                 seekingTarget = true;
@@ -358,10 +401,10 @@ public class RobotMain extends IterativeRobot {
                 drive.info();
                 drive.setPosition(drive.axisCam.getHeading() + angleOffset);
             }
-        }else{
+        }else{*/
             //We are not rectangle tracking, drive normally
             seekingTarget = false;
             drive.driveXbox(-xboxDriver.leftStickYAxis(), -xboxDriver.rightStickYAxis());
-        }
+        //}
     }
 }

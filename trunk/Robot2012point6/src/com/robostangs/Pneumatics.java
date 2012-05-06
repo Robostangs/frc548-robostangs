@@ -20,7 +20,7 @@ public class Pneumatics {
         
             compressor = new Relay(1, Constants.COMPRESSOR_RELAY1);
             pressureSensor = new DigitalInput(1, Constants.DIGITAL_INPUT1);
-            //rampCylinder = new Solenoid(Constants.RAMPCYLINDER_SOLENOID1, Constants.RAMPCYLINDER_SOLENOID2);        
+            rampCylinder = new Solenoid(Constants.RAMPCYLINDER_SOLENOID);        
             gearCylinder = new Solenoid(Constants.GEARCYLINDER_SOLENOID1);
             ingestCylinder = new Solenoid(Constants.INGESTCYLINDER_SOLENOID1);
         
@@ -47,10 +47,15 @@ public class Pneumatics {
      * Enable/disable ramps
      */
     public void setRampCylinder(boolean x){
-        /*
         rampCylinder.set(x);
-        */
-    }       
+    }
+    
+    /*
+     * Get state of ramp cylinder
+     */
+    public boolean getRampCylinder(){
+        return rampCylinder.get();
+    }
 
     /*
      * Switch the drive train gear

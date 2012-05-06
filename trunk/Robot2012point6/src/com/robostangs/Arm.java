@@ -131,4 +131,11 @@ public class Arm
     {
         return pid.isEnable();
     }
+    
+    /*
+     * return arm jags avg power
+     */
+    public double getPower(){
+        return output.getPower();
+    }
 }

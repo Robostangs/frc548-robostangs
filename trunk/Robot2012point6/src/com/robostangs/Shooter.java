@@ -106,7 +106,7 @@ public class Shooter
     public void fenderShot(){
         try{ 
             topMotor.setX(0);
-            bottomMotor.setX(3100);
+            bottomMotor.setX(2950);//3100
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }

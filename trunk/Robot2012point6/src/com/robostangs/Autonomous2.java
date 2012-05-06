@@ -168,16 +168,18 @@ public class Autonomous2{
                             }
                             break;                        
                         case 1: //prepare
-                            sh.fenderShot();
+                            sh.setTopRpm(0);
+                            sh.setBottomRpm(3025);
                             sh.setConveyorSpeed(0);
                             ar.setPosition(Constants.ARM_TOP);
                             Timer.delay(3.25);
                             step++;
                             break;
                         case 2:     //Shoot
-                            sh.fenderShot();
-                            sh.setConveyorSpeed(1);
-                            Timer.delay(3);
+                            sh.setTopRpm(0);
+                            sh.setBottomRpm(3025);
+                            sh.setConveyorSpeed(.5);
+                            Timer.delay(4);
                             step++;
                             break;
                         case 3:     //Reset
@@ -186,6 +188,8 @@ public class Autonomous2{
                             ar.setPosition(Constants.ARM_BOTTOM);
                             sh.setConveyorSpeed(0);
                             break;    
+                        default:
+                            break;
                             
                     }
                     break;

@@ -19,19 +19,18 @@ public class Constants {
         public static final int ARM_MAX_ANGLE = 59;
         public static final int ARM_MIN_ANGLE = -57;
         
-        /*
-         * //Comp
-        public static final int ARM_LOW = 574;
+
+        public static final int ARM_LOW = 568;
         public static final int ARM_TOP = 786;
-        public static final int ARM_MIDDLE = 745;
-        public static final int ARM_BOTTOM = 348;*/
+        public static final int ARM_MIDDLE = 739;
+        public static final int ARM_BOTTOM = 342;
         
-        //Practice
+        /*/Practice
         public static final int ARM_LOW = 372;
         public static final int ARM_TOP = 582;
         public static final int ARM_MIDDLE = 545;//562;
         public static final int ARM_BOTTOM = 182;
-        
+        */
         public static final int ARM_POT_MAX = ARM_TOP + 2;
         public static final int ARM_POT_MIN = ARM_BOTTOM -2;
         
@@ -74,14 +73,14 @@ public class Constants {
         public static final double TSKi = 0.05;//1;
         public static final double TSKd = 0;//0;
         
-        public static final double BSKp = .2;//.2;
-        public static final double BSKi = 1;//1;
+        public static final double BSKp = .6;//.2;
+        public static final double BSKi = 0.05;//1;
         public static final double BSKd = 0;//0;
         
         //TODO: Get values
         public static final double SHOOTER_FRONT_FENDER_RPM = 1162.49046;
-        public static final double SHOOTER_SIDE_KEY_RPM = 435;//375;
-        public static final double SHOOTER_FRONT_KEY_RPM = 405;
+        public static final double SHOOTER_SIDE_KEY_RPM = 310;//435;//375;
+        public static final double SHOOTER_FRONT_KEY_RPM = 255;//405;
         public static final double SHOOTER_BACK_KEY_RPM = 1735.8208;
         //TODO: Check
         public static final int INGESTOR_ARM_MAX_ANGLE = -45;
@@ -122,11 +121,10 @@ public class Constants {
     /*
      * Pneumatics
      */
-        public static final int RAMPCYLINDER_SOLENOID1 = 0;
-        public static final int RAMPCYLINDER_SOLENOID2 =0;
         public static final int COMPRESSOR_RELAY1 = 2;
         public static final int DIGITAL_INPUT1 = 14;
         public static final int GEARCYLINDER_SOLENOID1 = 2;
         public static final int INGESTCYLINDER_SOLENOID1 = 3;
+        public static final int RAMPCYLINDER_SOLENOID = 4;
         public static final boolean LOW_SPEED = false;           //Position of shifter for high gear
 }

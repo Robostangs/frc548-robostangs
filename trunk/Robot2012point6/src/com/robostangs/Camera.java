@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.image.*;
  */
 public class Camera implements PIDSource{
     private AxisCamera camera;
+    private AxisCamera cam2;
     private CriteriaCollection cc;                  // the criteria for doing the particle filter operation
     private ParticleAnalysisReport[] reports;       //Array of particle reports
     private ParticleAnalysisReport lowestReport;    //Bottom Rectangle Target
@@ -22,6 +23,11 @@ public class Camera implements PIDSource{
 
     
     public Camera(){
+            cam2 = AxisCamera.getInstance("10.5.48.12");
+            cam2.writeResolution(AxisCamera.ResolutionT.k160x120);
+            cam2.writeCompression(60);
+            cam2.writeMaxFPS(15);
+            
             camera = AxisCamera.getInstance("10.5.48.11");  // get an instance ofthe camera
             camera.writeResolution(AxisCamera.ResolutionT.k640x480);//.k160x120);
         cc = new CriteriaCollection();      // create the criteria for the particle filter
@@ -74,10 +80,10 @@ public class Camera implements PIDSource{
             beginCalc = true;//ready to process images
             
             //write then free images
-            System.out.println("Saving images");
-            image.write("../../images/orig" + Timer.getFPGATimestamp() + ".jpg");
-            convexHullImage.write("../../images/cvhi" + Timer.getFPGATimestamp() + ".jpg");
-            Log.getInstance().write("Just attemped to save images at: " + Timer.getFPGATimestamp());
+            //System.out.println("Saving images");
+            //image.write("../../images/orig" + Timer.getFPGATimestamp() + ".jpg");
+            //convexHullImage.write("../../images/cvhi" + Timer.getFPGATimestamp() + ".jpg");
+            //Log.getInstance().write("Just attemped to save images at: " + Timer.getFPGATimestamp());
             
             image.free();
             thresholdImage.free();

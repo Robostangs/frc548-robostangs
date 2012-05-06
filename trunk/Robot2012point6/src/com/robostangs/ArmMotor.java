@@ -34,7 +34,6 @@ public class ArmMotor implements PIDOutput{
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
-
     }
     public void set(double value){
         try {
@@ -43,5 +42,13 @@ public class ArmMotor implements PIDOutput{
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
+    }
+    public double getPower(){
+        try {
+            return (arm_jag_a.getOutputVoltage() + arm_jag_b.getOutputVoltage())/2;
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 }
