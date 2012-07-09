@@ -20,10 +20,10 @@ public class Constants {
         public static final int ARM_MIN_ANGLE = -57;
         
 
-        public static final int ARM_LOW = 568;
-        public static final int ARM_TOP = 786;
-        public static final int ARM_MIDDLE = 739;
-        public static final int ARM_BOTTOM = 342;
+        public static final int ARM_LOW = 539;
+        public static final int ARM_TOP = 757;
+        public static final int ARM_MIDDLE = 710;
+        public static final int ARM_BOTTOM = 330
         
         /*/Practice
         public static final int ARM_LOW = 372;
