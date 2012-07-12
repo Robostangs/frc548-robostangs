@@ -23,7 +23,7 @@ public class Constants {
         public static final int ARM_LOW = 539;
         public static final int ARM_TOP = 757;
         public static final int ARM_MIDDLE = 710;
-        public static final int ARM_BOTTOM = 330
+        public static final int ARM_BOTTOM = 330;
         
         /*/Practice
         public static final int ARM_LOW = 372;
