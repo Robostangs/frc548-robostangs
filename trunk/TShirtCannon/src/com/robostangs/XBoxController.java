@@ -55,9 +55,9 @@ public class XBoxController extends Joystick{
         return getRawAxis(3);
     }
     public double leftAngle(){
-	return MathUtils.atan(leftStickYAxis()/leftStickXAxis());
+	return (MathUtils.atan(leftStickYAxis()/leftStickXAxis())) * (180 / Math.PI);
     }
     public double rightAngle(){
-	return MathUtils.atan(rightStickYAxis()/rightStickXAxis());
+	return (MathUtils.atan(rightStickYAxis()/rightStickXAxis())) * (180 / Math.PI);
     }
 }
