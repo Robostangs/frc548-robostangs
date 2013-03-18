@@ -1,10 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.robostangs;
 
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.Vector;
 
 /**
@@ -14,7 +11,7 @@ import java.util.Vector;
 
 public class Autonomous {
     private static Autonomous instance = null;    
-    private static Preferences pref;
+    private static Timer timer;
     private static boolean driving = false;
     private static boolean ingesting = false;
     private static boolean shooting = false;
@@ -22,9 +19,10 @@ public class Autonomous {
     private static boolean delay = false;
     private static boolean armMoving = false;
     private static boolean fallbackMode = false;
+    private static boolean init = true;
     private static String[] keys;
+    private static double[] stepData;
     private static double timeForStep = 0.0;
-    private static StopWatch timer;
     private static int status = 0;
     private static boolean gyroReady = false;
     private static double angle = 0;
@@ -32,8 +30,7 @@ public class Autonomous {
     
     
     private Autonomous() {
-        pref = Preferences.getInstance();
-        timer = new StopWatch();
+        timer = new Timer();
         getInfo();
         checkInfo();
     }
@@ -50,12 +47,13 @@ public class Autonomous {
      * Also sets variables not related to steps
      */
     public static void getInfo() {
-        Vector vKeys = pref.getKeys();
-        vKeys.trimToSize();  //for proper array length
-        keys = new String[vKeys.capacity()];
-        vKeys.copyInto(keys);
-        
-        timeForStep = pref.getDouble("timeForStep", 0);
+        //TODO: read from text file
+    }
+
+    public static void printKeys() {
+        for (int i = 0; i < keys.length; i++) {
+            System.out.println(keys[i]);
+        }
     }
     
     /**
@@ -72,9 +70,6 @@ public class Autonomous {
     }
     
     public static void run() {
-        double stepData = 0;
-        int numberToShoot = 0;
-        String armPos = "";
         if (!fallbackMode) {
             for (int i = 0; i < keys.length; i++) {    
                 driving = keys[i].endsWith("Distance");
@@ -84,24 +79,16 @@ public class Autonomous {
                 armMoving = keys[i].startsWith("arm");
                 delay = keys[i].startsWith("delay");
 
-                try {
-                    if (shooting) {
-                        numberToShoot = pref.getInt(keys[i], 0);
-                    } else {
-                        stepData = pref.getDouble(keys[i], 0);
-                    }
-                } catch (Preferences.IncompatibleTypeException ex) {
-                    armPos = pref.getString(keys[i], "");
-                }
-
                 status = 0;
                 determineAngle();
                 timer.start();
 
                 if (driving && !ingesting) {
-                    while (status == 0 && timer.getSeconds() < timeForStep) {
+                    while (status == 0 && timer.get() < timeForStep) {
+                        /*
                         status = DriveTrain.driveStraight(Constants.AUTON_DRIVE_POWER, angle, 
-                                stepData);
+                                stepData[i]);
+                                * */
                     }
 
                     gyroReady = false;
@@ -114,9 +101,11 @@ public class Autonomous {
                     }
 
                 } else if (driving && ingesting) {
-                    while (status == 0 && timer.getSeconds() < timeForStep) {
+                    while (status == 0 && timer.get() < timeForStep) {
+                        /*
                         status = DriveTrain.driveStraight(Constants.AUTON_DRIVE_POWER, angle, 
-                                stepData);
+                                stepData[i]);
+                                * */
                         Loader.ingest();
                     }
 
@@ -131,8 +120,8 @@ public class Autonomous {
                     }
 
                 } else if (turning) {
-                    while (status == 0 && timer.getSeconds() < timeForStep) {
-                        status = DriveTrain.turn(Constants.AUTON_TURN_POWER, stepData);
+                    while (status == 0 && timer.get() < timeForStep) {
+                        //status = DriveTrain.turn(Constants.AUTON_TURN_POWER, stepData[i]);
                     }
 
                     gyroReady = false;
@@ -145,8 +134,8 @@ public class Autonomous {
                     }
 
                 } else if (shooting) {
-                    while (status == 0 && timer.getSeconds() < timeForStep) {
-                        status = Shooter.shoot(numberToShoot);   
+                    while (status == 0 && timer.get() < timeForStep) {
+                        status = Shooter.shoot( (int) stepData[i]);
                         Loader.loadShooter();
                     }
 
@@ -161,15 +150,14 @@ public class Autonomous {
                     }
 
                 } else if (armMoving) {
-                    while (status == 0 && timer.getSeconds() < timeForStep) {
-                        if (armPos.equalsIgnoreCase("zero")) {
-                            status = Arm.flatPos();
-                        } else if (armPos.equalsIgnoreCase("pyramid")) {
-                            status = Arm.underPyramidShotPos();
-                        } else if (stepData != 0 && stepData != -1) {
-                            status = Arm.setPosition(stepData);
-                        } else if (stepData == -1) {
-                            status = Arm.camPos();
+                    while (status == 0 && timer.get() < timeForStep) {
+                        if (stepData[i] == Constants.AUTON_ARM_LOW_POS) {
+                            status = Arm.lowestPos();
+                        } else if (stepData[i] == Constants.AUTON_ARM_UNDER_PYRAMID_POS) {
+                        } else if (stepData[i] != 0 && stepData[i] != -1) {
+                            status = Arm.setPosition(stepData[i]);
+                        } else if (stepData[i] == -1) {
+                            //status = Arm.camPos();
                         }
                     }
 
@@ -182,7 +170,7 @@ public class Autonomous {
                     }
 
                 } else if (delay) {
-                    while (timer.getSeconds() < stepData) { }
+                    while (timer.get() < stepData[i]) { }
 
                     timer.stop();
                     timer.reset();
@@ -199,7 +187,7 @@ public class Autonomous {
      */
     public static void determineAngle() {
         if (!gyroReady) {
-            angle = DriveTrain.getAngle();
+            //angle = DriveTrain.getAngle();
             gyroReady = true;
         }
     }
@@ -212,8 +200,8 @@ public class Autonomous {
         switch (step) {
             case 0:
                 timer.start();
-                while (timer.getSeconds() < Constants.AUTON_FALLBACK_DRIVE_TIME) {
-                    DriveTrain.driveStraight(Constants.AUTON_DRIVE_POWER, Constants.AUTON_DRIVE_ANGLE);
+                while (timer.get() < Constants.AUTON_FALLBACK_DRIVE_TIME) {
+                    //DriveTrain.driveStraight(Constants.AUTON_DRIVE_POWER, Constants.AUTON_DRIVE_ANGLE);
                 }
                 
                 DriveTrain.stop();
@@ -223,8 +211,8 @@ public class Autonomous {
                 break;
             case 1:
                 timer.start();
-                while (timer.getSeconds() < Constants.AUTON_FALLBACK_TURN_TIME) {
-                    DriveTrain.turn(Constants.AUTON_TURN_POWER, Constants.AUTON_TURN_ANGLE);
+                while (timer.get() < Constants.AUTON_FALLBACK_TURN_TIME) {
+                    //DriveTrain.turn(Constants.AUTON_TURN_POWER, Constants.AUTON_TURN_ANGLE);
                 }
                 
                 DriveTrain.stop();
@@ -234,7 +222,7 @@ public class Autonomous {
                 break;
             case 2:
                 timer.start();
-                while (timer.getSeconds() < Constants.AUTON_FALLBACK_ARM_MOVE_TIME) {
+                while (timer.get() < Constants.AUTON_FALLBACK_ARM_MOVE_TIME) {
                     Arm.setPosition(Constants.AUTON_ARM_POS);
                 }
                 
@@ -245,7 +233,7 @@ public class Autonomous {
                 break;
             case 3:
                 timer.start();
-                while (timer.getSeconds() < Constants.AUTON_FALLBACK_SHOOT_TIME) {
+                while (timer.get() < Constants.AUTON_FALLBACK_SHOOT_TIME) {
                     Shooter.shoot(Constants.AUTON_SHOOT_DISC_NUM);
                 }
                 
@@ -255,6 +243,27 @@ public class Autonomous {
                 break;
             default:
                 break;
+        }
+    }
+
+    public static void shootThree() {
+        if (init) {
+            timer.stop();
+            timer.reset();
+            System.out.println("timer init: " + timer.get());
+            timer.start();
+            init = false;
+        }
+        System.out.println("step timer: " + timer.get() + " " + step);
+        Shooter.shoot();
+
+        if (timer.get() > 2.5) {
+            Loader.loadShooter();
+        }
+
+        if (timer.get() > 4.0) {
+            Loader.allOff();
+            timer.reset();
         }
     }
 }

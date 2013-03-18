@@ -4,54 +4,41 @@
  */
 package com.robostangs;
 
-import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.camera.AxisCameraException;
+import edu.wpi.first.wpilibj.image.ColorImage;
+import edu.wpi.first.wpilibj.image.NIVisionException;
 
 /**
- * Manages the two axis cameras and image processing
- * maintainer: @sky
- * (massively TODO)
+ *
+ * @author Robostangs
  */
-public class Camera implements PIDSource {
-    private static Camera instance = null;
-    private AxisCamera armCam, ingestCam;
-    private boolean pyramidMode;
-    
-    private Camera() {
-        
-    }
-    
-    public static Camera getInstance() {
-        if (instance == null) {
-            instance = new Camera();
-        }
-        
-        return instance;
-    }
-    
-    public static void getImage() {
-        
-    }
-    
-    public static double getTargetAngle() {
-        return 0;
-    }
-    
-    public static double getTargetHeading() {
-        return 0;
-    }
+public class Camera {
+   private static AxisCamera cam;
+   private static Camera instance = null;
+   
+   private Camera() {
+       cam = AxisCamera.getInstance("10.5.48.19");
+   }
 
-    public double pidGet() {
-        return 0;
-    }
-    
-    public static void enablePyramidMode() {
-        
-    }
-    
-    public static void enableThreePointMode() {
-        
-    }
-    
+   public static Camera getInstance() {
+       if (instance == null) {
+           instance = new Camera();
+       }
+       return instance;
+   }
+
+   public static void saveImage() {
+       ColorImage image = null;
+       try {
+           image = cam.getImage();
+           image.write("../../images" + Timer.getFPGATimestamp() + ".jpg");
+           image.free();
+       } catch (AxisCameraException ex) {
+           ex.printStackTrace();
+       } catch (NIVisionException ex) {
+           ex.printStackTrace();
+       }
+   }
 }

@@ -1,21 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.robostangs;
-
 
 /**
  * Uses conveyors, lifter, ingestor to get frisbees to shooter
  * maintainer: Tejas
- * TODO: more throughly check
  */
+
 public class Loader {
     private static Loader instance = null;
+    private static boolean lifterMovingUp = false;
     
     private Loader() {
         Conveyors.getInstance();
-        Ingestor.getInstance();
+        //Ingestor.getInstance();
         Lifter.getInstance();
     }
     
@@ -32,80 +28,67 @@ public class Loader {
     public static void allOff(){
         Lifter.stop();
         Conveyors.stopBoth();
-        Ingestor.turnOff();
+        //Ingestor.turnOff();
+    }
+
+    public static void stopShooterConveyor() {
+        Conveyors.stopShooter();
     }
     
     /**
      * runs ingestor + ingestConveyor
+     * TODO: automatically move lifter down
      */
     public static void ingest(){
-        Ingestor.turnOn();
-        Conveyors.ingestMode();
+        //Ingestor.turnOn();
+        Conveyors.ingest();
     }
     
     /**
-     * runs lift, shoot conveyor
+     * runs shooter conveyor
+     * TODO: moves lifter to top pos if not there
      */
     public static void loadShooter(){
-        Lifter.enable();
-        Conveyors.feedMode();
-    }
-    
-    /**
-     * runs all in ingest -> shoot direction
-     */
-    public void runAll(){
-        Ingestor.turnOn();
-        Conveyors.ingestMode();
-        Conveyors.readyShooter();
+        Conveyors.loadShooter();
     }
     
     /**
      * reverses to feed from station
+     * TODO: moves lifter to top pos if not there
      */
     public static void feed(){
         Conveyors.feedMode();
     }
     
     /**
-     * moves lift down
-     */
-    public static void liftDown(){
-        Lifter.reverse();
-    }
-    
-    /**
-     * moves lift up
+     * Moves lifter to up position
+     * TODO: implement/test
      */
     public static void liftUp() {
-        Lifter.enable();
+        if (Lifter.getSetSpeed() > 0) {
+            lifterMovingUp = true;
+        } else {
+            lifterMovingUp = false;
+        }
+        Lifter.raise();
+        Conveyors.ingest();
     }
-    
+
     /**
      * turns off ingestor
      */
     public static void ingestorOff() {
-        Ingestor.turnOff();
+        //Ingestor.turnOff();
+        if (!lifterMovingUp) {
+            Conveyors.stopIngest();
+        }
     }
     
-    /**
-     * turns off ingest conveyor
-     */
-    public static void ingestConveyorOff() {
-        Conveyors.stopIngest();
+    public static void stopConveyors() {
+        Conveyors.stopBoth();
     }
-    
-    /**
-     * turns off lifter
-     */
+
     public static void liftOff() {
         Lifter.stop();
-    }
-    
-    /**
-     * turn off shooter conveyor
-     */
-    public static void shooterConveyorOff() {
-        Conveyors.stopShooter();
     }
 }

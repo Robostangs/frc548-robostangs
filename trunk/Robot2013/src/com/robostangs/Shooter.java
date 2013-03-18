@@ -1,10 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.robostangs;
 
 import edu.wpi.first.wpilibj.CANJaguar;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -16,7 +14,7 @@ public class Shooter {
     public static Shooter instance = null;
     private static CANJaguar shooter1, shooter2, shooter3;
     private static boolean feedMode = false;
-    private static StopWatch timer;
+    private static Timer timer;
     
     /**
      * Initializing jags and timer
@@ -30,7 +28,7 @@ public class Shooter {
             System.out.println("CAN ERROR AT SHOOTER");
             ex.printStackTrace();
         }
-        timer = new StopWatch();
+        timer = new Timer();
     }
     
     /**
@@ -50,8 +48,8 @@ public class Shooter {
     public static void shoot() {
         try{
             shooter1.setX(Constants.SHOOTER_MAX_POWER);
-            shooter2.setX(Constants.SHOOTER_MAX_POWER);
-            shooter3.setX(Constants.SHOOTER_MAX_POWER);
+            shooter2.setX(-Constants.SHOOTER_MAX_POWER);
+            shooter3.setX(-Constants.SHOOTER_MAX_POWER);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
@@ -87,7 +85,7 @@ public class Shooter {
         timer.start();
         shoot();
         
-        if (timer.getSeconds() > time) {
+        if (timer.get() > time) {
             stop();
             timer.stop();
             timer.reset();
@@ -104,14 +102,17 @@ public class Shooter {
     public static void feed() {
         try {
             shooter1.setX(-Constants.SHOOTER_FEED_POWER); //feed shouldn't run @ full
-            shooter2.setX(-Constants.SHOOTER_FEED_POWER);
-            shooter3.setX(-Constants.SHOOTER_FEED_POWER);
+            shooter2.setX(Constants.SHOOTER_FEED_POWER);
+            shooter3.setX(Constants.SHOOTER_FEED_POWER);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
         feedMode = true;
     }
 
+    /**
+     * Shut down shooter jag
+     */
     public static void stop() {
         try{
             shooter1.setX(0.0);
@@ -120,10 +121,6 @@ public class Shooter {
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
-        
-        /**
-         * Shut down shooter jag
-         */
     }
 
     public static boolean isFeedMode() {
@@ -138,4 +135,5 @@ public class Shooter {
     public static void sendReady() {
         SmartDashboard.putBoolean("Shooter Ready: ", readyToShoot());
     }
+
 }

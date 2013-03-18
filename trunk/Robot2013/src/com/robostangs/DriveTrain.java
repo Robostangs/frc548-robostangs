@@ -1,70 +1,58 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.robostangs;
 
 import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Gyro;
-import edu.wpi.first.wpilibj.can.CANTimeoutException;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * DT has 6 jags, encoder on each side, and a gyro
  * maintainer: Koshiro
- * TODO: drive train: all methods must be static
  */
 public class DriveTrain {
-    private static DriveTrain instance = getInstance();
-    private static CANJaguar leftFront, leftMid, leftBack, rightFront, rightMid, 
-            rightBack, climber;
+    private static DriveTrain instance = null;
+    private static CANJaguar climber;
     private static Encoder leftEncoder, rightEncoder;
-    private static Gyro gyro;
-    private static StopWatch timer;
+    private static Timer timer;
     private static boolean climbMode;
+    //private static PIDController pid;
+    //private static Gyro gyro;
+    //private static Servo servo;
     
     private DriveTrain() {
+        DriveMotors.getInstance();
+        timer = new Timer();
+        climbMode = false;
+        
+        /*
         leftEncoder = new Encoder (Constants.DT_LEFT_ENCODER_FRONT, Constants.DT_LEFT_ENCODER_BACK);
         rightEncoder = new Encoder (Constants.DT_RIGHT_ENCODER_FRONT, Constants.DT_RIGHT_ENCODER_BACK);
+        resetEncoders();
+        startEncoders();
+        */
+
+        //servo = new Servo(Constants.DT_SERVO_POS);
         
-        gyro = new Gyro (Constants.DT_GYRO_POS);
+        //gyro = new Gyro (Constants.DT_GYRO_POS);
         
-        timer = new StopWatch();
+        /*
+        pid = new PIDController(Constants.DT_PID_K_P, Constants.DT_PID_K_I, 
+                Constants.DT_PID_K_D, DriveCamera.getInstance(), DriveMotors.getInstance());
+        */
         
-        try {
-            //declare jags here, init jags method not necessary
-            leftFront = new CANJaguar(Constants.DT_JAG_LEFT_FRONT_POS);
-            leftMid = new CANJaguar(Constants.DT_JAG_LEFT_MID_POS);
-            leftBack = new CANJaguar(Constants.DT_JAG_LEFT_BACK_POS);
-            rightFront = new CANJaguar(Constants.DT_JAG_RIGHT_FRONT_POS);
-            rightMid = new CANJaguar(Constants.DT_JAG_RIGHT_MID_POS);
-            rightBack = new CANJaguar(Constants.DT_JAG_RIGHT_BACK_POS);
-            climber = new CANJaguar (Constants.DT_JAG_CLIMB_POS);
-            leftFront.configFaultTime(Constants.JAG_CONFIG_TIME);
-            leftMid.configFaultTime(Constants.JAG_CONFIG_TIME);
-            leftBack.configFaultTime(Constants.JAG_CONFIG_TIME);
-            rightFront.configFaultTime(Constants.JAG_CONFIG_TIME);
-            rightMid.configFaultTime(Constants.JAG_CONFIG_TIME);
-            rightBack.configFaultTime(Constants.JAG_CONFIG_TIME);
-            climber.configFaultTime(Constants.JAG_CONFIG_TIME);
-        } catch (CANTimeoutException ex) {
-            System.out.println("CAN JAG TIMEOUT EXCEPTION ON DRIVE TRAIN");
-            Log.write("CAN JAG TIMEOUT EXCEPTION ON DRIVE TRAIN");
-        }
-        
-        climbMode = false;
     }
     
     /**
-     * singleton stuff
-     * @return 
+     * singleton
+     * @return instance of dt 
      */
     public static DriveTrain getInstance() {
         if (instance == null) {
             instance = new DriveTrain();
         }
-        
         return instance;
     }
     
@@ -74,17 +62,13 @@ public class DriveTrain {
      * @param rightPower 
      */
     public static void drive(double leftPower, double rightPower) {
-        try {
-            leftFront.setX(leftPower);
-            leftMid.setX(leftPower);
-            leftBack.setX(leftPower);
-            rightFront.setX(rightPower);
-            rightMid.setX(rightPower);
-            rightBack.setX(rightPower);
-        } catch (CANTimeoutException ex) {
-            System.out.println("CAN JAG TIMEOUT EXCEPTION ON DRIVE TRAIN");
-            Log.write("CAN JAG TIMEOUT EXCEPTION ON DRIVE TRAIN");
+        /*
+        if (pid.isEnable()) {
+            pid.disable();
         }
+        * */
+        
+        DriveMotors.set(leftPower, rightPower);
     }
     
     /**
@@ -96,22 +80,16 @@ public class DriveTrain {
     }
     
     /**
-     * 
+     * Drive method optimized for humans 
      * @param leftPower
      * @param rightPower 
      */
-    public static void humanDrive(double leftPower, double rightPower) {
-        //TODO: to be determined
-        drive (leftPower, rightPower);
-    }
-    
-    /**
-     * TODO: ???
-     * @param power
-     * @param angle 
-     */
-    public static void arcadeDrive(double power, double angle) {
-        
+    public static void humanDrive(double leftStick, double rightStick) {
+        if ((leftStick < -.3 && rightStick > .3) || (leftStick > .3 && rightStick < -.3)) {
+            rightStick = rightStick*rightStick * (rightStick / Math.abs(rightStick));
+            leftStick = leftStick*leftStick * (leftStick / Math.abs(leftStick));
+        }
+        drive(leftStick, rightStick);
     }
     
     /**
@@ -124,10 +102,132 @@ public class DriveTrain {
     }
     
     /**
+     * reset the timer
+     */
+    public static void resetTimer() {
+        timer.reset();
+    }
+    
+    /**
+     * stop everything in DriveTrain
+     */
+    public static void stop() {
+        //pid.disable();
+        drive(0, 0);
+    }
+    
+    /**
+     * check the mode
+     * @return climbMode
+     */
+    public static boolean getMode() {
+        return climbMode;
+    }
+    
+    /**
+     * get distance from the left encoder
+     * @return in meters
+     *
+    public static double getLeftEncoderDistance() {
+        return leftEncoder.getDistance();
+    }
+    
+    /**
+     * get distance from the right encoder
+     * @return in meters
+     *
+    public static double getRightEncoderDistance() {
+        return rightEncoder.getDistance();
+    }*/
+    
+    /**
+     * get the angle using gyro
+     * @return in degrees
+     *
+    public static double getAngle() {
+        return gyro.getAngle();
+    } */
+    
+    
+    /**
+     * resets all encoders
+     *
+    public static void resetEncoders() {
+        leftEncoder.reset();
+        rightEncoder.reset();
+    }
+
+    public static void startEncoders() {
+        leftEncoder.start();
+        rightEncoder.start();
+    }
+
+    public static void stopEncoders() {
+        leftEncoder.stop();
+        rightEncoder.stop();
+    }*/
+    
+    /**
+     * sends encoder status to SmartDashboard
+     *
+    public static void sendEncoders() {
+        SmartDashboard.putData("Left Encoder: ", leftEncoder);
+        SmartDashboard.putData("Rigth Encoder: ", rightEncoder);
+    }*/
+    
+    /**
+     * send gyro status to SmartDashboard
+     *
+    public static void sendGyro() {
+        SmartDashboard.putData("Gyro: ", gyro);
+    } */
+    
+    /*
+    public static void enablePid() {
+        pid.enable();
+    }
+    
+    public static boolean isPidEnabled() {
+        return pid.isEnable();
+    } */
+    
+    /**
+     * enable climb mode
+     *
+    public static void enableClimbMode() {
+        //servo.setAngle(Constants.DT_CLIMB_POS);
+        System.out.println("going to climb mode: " + servo.get());
+        climbMode = true;
+    }
+    
+    /**
+     * enable drive mode
+     *
+    public static void enableDriveMode() {
+        //servo.setAngle(Constants.DT_DRIVE_POS);
+        System.out.println("going to drive mode: " + servo.get());
+        climbMode = false;
+    }
+    
+    public static boolean servoReady() {
+        if (climbMode && !(servo.get() == (Constants.DT_CLIMB_POS / 180.0))) {
+            enableClimbMode();
+           return true;
+        } else if (!climbMode && !(servo.get() == (Constants.DT_DRIVE_POS / 180.0))) {
+            enableDriveMode();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    **
+     * TODO: climbing stuff if climbMode = true
+     */
+    /**
      * drive straight
      * @param power
-     * @param angle 
-     */
+     * @param angle
+     *
     public static void driveStraight(double power, double angle) {
         double leftPower = power;
         double rightPower = power;
@@ -142,7 +242,7 @@ public class DriveTrain {
         }
         
         drive(leftPower, rightPower);
-    }
+    } */
     
     /**
      * drive straight for a certain distance
@@ -150,7 +250,7 @@ public class DriveTrain {
      * @param angle
      * @param distance
      * @return -1 when incomplete, 0 when in progress, 1 when complete
-     */
+     *
     public static int driveStraight(double power, double angle, double distance) {
         timer.start();
         
@@ -159,7 +259,7 @@ public class DriveTrain {
          * change power(Volts) to speed(distance/time)
          * get projected time speed = volt --> distance/time;
          * if the actual time passes expected time +1sec, stop and return -1
-         */ 
+         * 
         double speed = power * Constants.DT_CONV_VOLT_TO_M_PER_SEC;
         double expectedTime = distance / speed;
         if (timer.get() > (expectedTime + Constants.DT_DELAY_TIME)) {
@@ -180,22 +280,23 @@ public class DriveTrain {
             resetEncoders();
             return 1;
         }
-    }
+    } */
     
     /**
      * turn around for angle
      * @param power
      * @param angle
      * @return -1 if incomplete, 0 when in progress, 1 if complete
-     */
+     *
     public static int turn(double power, double angle) {
+        //pid.enable();
         timer.start();
         
         /*
          * timer stuff
          * it's a circular motion omega = angle / time
          * t = angle / power
-         */ 
+         * 
         double speed = power * Constants.DT_CONV_VOLT_TO_M_PER_SEC;
         double expectedTime = Math.toRadians(angle) / speed;
         if (timer.get() > (expectedTime + Constants.DT_DELAY_TIME)) {
@@ -229,8 +330,7 @@ public class DriveTrain {
                 return 1;
             }
         }
-    }
-    
+    } */
     /**
      * drive the robot along a circular arc
      * @param power
@@ -252,90 +352,4 @@ public class DriveTrain {
     public static int driveToPosition(double power, double x, double y) {
         return -1;
     }
-    
-    /**
-     * get distance from the left encoder
-     * @return in meters
-     */
-    public static double getLeftEncoderDistance() {
-        return leftEncoder.getDistance();
-    }
-    
-    /**
-     * get distance from the right encoder
-     * @return in meters
-     */
-    public static double getRightEncoderDistance() {
-        return rightEncoder.getDistance();
-    }
-    
-    /**
-     * get the angle using gyro
-     * @return in degrees
-     */
-    public static double getAngle() {
-        return gyro.getAngle();
-    }
-    
-    /**
-     * reset the timer
-     */
-    public static void resetTimer() {
-        timer.reset();
-    }
-    /**
-     * resets all encoders
-     */
-    public static void resetEncoders() {
-        leftEncoder.reset();
-        rightEncoder.reset();
-    }
-    
-    /**
-     * sends encoder status to SmartDashboard
-     */
-    public static void sendEncoders() {
-        SmartDashboard.putData("Left Encoder: ", leftEncoder);
-        SmartDashboard.putData("Rigth Encoder: ", rightEncoder);
-    }
-    
-    /**
-     * send gyro status to SmartDashboard
-     */
-    public static void sendGyro() {
-        SmartDashboard.putData("Gyro: ", gyro);
-    }
-    
-    /**
-     * stop everything in DriveTrain
-     */
-    public static void stop() {
-        drive(0, 0);
-    }
-    
-    /**
-     * check the mode
-     * @return climbMode
-     */
-    public static boolean getMode() {
-        return climbMode;
-    }
-    
-    /**
-     * enable climb mode
-     */
-    public static void enableClimbMode() {
-        climbMode = true;
-    }
-    
-    /**
-     * enable drive mode
-     */
-    public static void enableDriveMode() {
-        climbMode = false;
-    }
-    
-    /**
-     * TODO: climbing stuff if climbMode = true
-     */
 }
