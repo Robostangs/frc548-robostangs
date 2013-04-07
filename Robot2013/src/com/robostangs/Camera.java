@@ -19,7 +19,7 @@ public class Camera {
    private static Camera instance = null;
    
    private Camera() {
-       cam = AxisCamera.getInstance("10.5.48.19");
+      // cam = AxisCamera.getInstance("10.5.48.19");
    }
 
    public static Camera getInstance() {

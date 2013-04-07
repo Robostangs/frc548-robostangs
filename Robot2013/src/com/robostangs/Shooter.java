@@ -1,7 +1,6 @@
 package com.robostangs;
 
 import edu.wpi.first.wpilibj.CANJaguar;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * maintainer: Nicholas
  */
 public class Shooter {
-    public static Shooter instance = null;
+    private static Shooter instance = null;
     private static CANJaguar shooter1, shooter2, shooter3;
     private static boolean feedMode = false;
     private static Timer timer;
@@ -32,7 +31,7 @@ public class Shooter {
     }
     
     /**
-     *setting up singleton
+     * setting up singleton
      */
     public static Shooter getInstance() {
         if (instance == null) {
@@ -47,54 +46,53 @@ public class Shooter {
      */
     public static void shoot() {
         try{
-            shooter1.setX(Constants.SHOOTER_MAX_POWER);
-            shooter2.setX(-Constants.SHOOTER_MAX_POWER);
-            shooter3.setX(-Constants.SHOOTER_MAX_POWER);
+            shooter1.setX(Constants.SHOOTER_MAX_POWER * 0.8);
+            shooter2.setX(Constants.SHOOTER_MAX_POWER * 0.8);
+            shooter3.setX(Constants.SHOOTER_MAX_POWER * 0.7);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
         feedMode = false;
     }
     
-    /**
-     * Shoots a certain number of frisbees
-     * @param number 
-     * @return 0 if in progress, 1 if complete
-     */
-    public static int shoot(int number) {
-        double time = 0;
-        
-        switch (number) {
-            case 1:
-                time = Constants.TIME_TO_SHOOT_ONE;
-                break;
-            case 2: 
-                time = Constants.TIME_TO_SHOOT_TWO;
-                break;
-            case 3: 
-                time = Constants.TIME_TO_SHOOT_THREE;
-                break;
-            case 4: 
-                time = Constants.TIME_TO_SHOOT_FOUR;
-                break;
-            default:
-                time = 0;
-                break;
+    public static void fullShoot() {
+        try{
+            shooter1.setX(Constants.SHOOTER_MAX_POWER);
+            shooter2.setX(Constants.SHOOTER_MAX_POWER);
+            shooter3.setX(Constants.SHOOTER_MAX_POWER * 0.9);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+        feedMode = false;
+
+    }
+    public static double getVoltage() {
+        try {
+            return shooter1.getBusVoltage();
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+            return -1;
+        }
+    }
+
+    /*
+    public static void voltageShoot() {
+        if (getVoltage() < (Constants.SHOOTER_FULL_BATTERY_VOLTAGE
+                - Constants.SHOOTER_VOLTAGE_TOLERANCE)) {
+            try{
+                shooter1.setX(Constants.SHOOTER_MAX_POWER);
+                shooter2.setX(Constants.SHOOTER_MAX_POWER);
+                shooter3.setX(Constants.SHOOTER_MAX_POWER * 0.9);
+            } catch (CANTimeoutException ex) {
+                ex.printStackTrace();
+            }
+            feedMode = false;
+        } else {
+            shoot();
         }
         
-        timer.start();
-        shoot();
-        
-        if (timer.get() > time) {
-            stop();
-            timer.stop();
-            timer.reset();
-            return 1;
-        }        
-        
-        return 0;
     }
-    
+
     /**
      * Set feeder power to negative
      * Start feedMode
@@ -102,8 +100,8 @@ public class Shooter {
     public static void feed() {
         try {
             shooter1.setX(-Constants.SHOOTER_FEED_POWER); //feed shouldn't run @ full
-            shooter2.setX(Constants.SHOOTER_FEED_POWER);
-            shooter3.setX(Constants.SHOOTER_FEED_POWER);
+            shooter2.setX(-Constants.SHOOTER_FEED_POWER);
+            shooter3.setX(-Constants.SHOOTER_FEED_POWER);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
@@ -127,13 +125,23 @@ public class Shooter {
         return feedMode;
     }
 
+    /*
     public static boolean readyToShoot() {
-        //TODO: get shooter jag current?
+        try {
+            if (shooter3.getOutputCurrent() <= Constants.SHOOTER_READY_CURRENT_MAX 
+                    && shooter3.getOutputCurrent() >= Constants.SHOOTER_READY_CURRENT_MIN) {
+                return true;
+            }
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
         return false;
     }
+    * *
     
     public static void sendReady() {
         SmartDashboard.putBoolean("Shooter Ready: ", readyToShoot());
     }
+    * */
 
 }

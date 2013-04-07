@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -14,13 +15,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class DriveTrain {
     private static DriveTrain instance = null;
-    private static CANJaguar climber;
     private static Encoder leftEncoder, rightEncoder;
     private static Timer timer;
     private static boolean climbMode;
     //private static PIDController pid;
     //private static Gyro gyro;
-    //private static Servo servo;
     
     private DriveTrain() {
         DriveMotors.getInstance();
@@ -34,7 +33,6 @@ public class DriveTrain {
         startEncoders();
         */
 
-        //servo = new Servo(Constants.DT_SERVO_POS);
         
         //gyro = new Gyro (Constants.DT_GYRO_POS);
         
@@ -84,12 +82,12 @@ public class DriveTrain {
      * @param leftPower
      * @param rightPower 
      */
-    public static void humanDrive(double leftStick, double rightStick) {
-        if ((leftStick < -.3 && rightStick > .3) || (leftStick > .3 && rightStick < -.3)) {
-            rightStick = rightStick*rightStick * (rightStick / Math.abs(rightStick));
-            leftStick = leftStick*leftStick * (leftStick / Math.abs(leftStick));
+    public static void humanDrive(double left, double right) {
+        if ((left < -.3 && right > .3) || (left > .3 && right < -.3)) {
+            right = right*right * (right / Math.abs(right));
+            left = left*left * (left / Math.abs(left));
         }
-        drive(leftStick, rightStick);
+        drive(left, right);
     }
     
     /**
@@ -114,14 +112,6 @@ public class DriveTrain {
     public static void stop() {
         //pid.disable();
         drive(0, 0);
-    }
-    
-    /**
-     * check the mode
-     * @return climbMode
-     */
-    public static boolean getMode() {
-        return climbMode;
     }
     
     /**
@@ -190,39 +180,6 @@ public class DriveTrain {
     public static boolean isPidEnabled() {
         return pid.isEnable();
     } */
-    
-    /**
-     * enable climb mode
-     *
-    public static void enableClimbMode() {
-        //servo.setAngle(Constants.DT_CLIMB_POS);
-        System.out.println("going to climb mode: " + servo.get());
-        climbMode = true;
-    }
-    
-    /**
-     * enable drive mode
-     *
-    public static void enableDriveMode() {
-        //servo.setAngle(Constants.DT_DRIVE_POS);
-        System.out.println("going to drive mode: " + servo.get());
-        climbMode = false;
-    }
-    
-    public static boolean servoReady() {
-        if (climbMode && !(servo.get() == (Constants.DT_CLIMB_POS / 180.0))) {
-            enableClimbMode();
-           return true;
-        } else if (!climbMode && !(servo.get() == (Constants.DT_DRIVE_POS / 180.0))) {
-            enableDriveMode();
-            return true;
-        } else {
-            return false;
-        }
-    }
-    **
-     * TODO: climbing stuff if climbMode = true
-     */
     /**
      * drive straight
      * @param power

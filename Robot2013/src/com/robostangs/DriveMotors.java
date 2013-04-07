@@ -47,12 +47,12 @@ public class DriveMotors implements PIDOutput{
     
     public static void set(double leftPower, double rightPower) {
         try {
-            leftFront.setX(-leftPower);
-            leftMid.setX(-leftPower);
-            leftBack.setX(-leftPower);
-            rightFront.setX(rightPower);
-            rightMid.setX(rightPower);
-            rightBack.setX(rightPower);
+            leftFront.setX(leftPower);
+            leftMid.setX(leftPower);
+            leftBack.setX(leftPower);
+            rightFront.setX(-rightPower);
+            rightMid.setX(-rightPower);
+            rightBack.setX(-rightPower);
         } catch (CANTimeoutException ex) {
             System.out.println("CAN JAG TIMEOUT EXCEPTION ON DRIVE TRAIN");
             Log.write("CAN JAG TIMEOUT EXCEPTION ON DRIVE TRAIN");

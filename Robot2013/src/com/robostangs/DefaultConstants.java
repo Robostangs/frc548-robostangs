@@ -1,70 +1,80 @@
 package com.robostangs;
 
-public class Constants {
+/**
+ *
+ * @author sky
+ */
+public class DefaultConstants {
     /*
      * Used in multiple classes
      */
     public static final double JAG_CONFIG_TIME = 0.5;
     public static final double BENNETT_CONSTANT = 0.44;
+    public static final double TELEOP_DRIVE_TIME = 1.5;
 
     /*
      * Arm
      */
     public static final int ARM_JAG_POS = 11;
-    public static final double ARM_MIN_POWER = -0.95;
-    public static final double ARM_MAX_POWER = 0.95;
-
-    // Pot A Values
-    public static final int ARM_POT_A_PORT = 1;
-    public static final double ARM_POT_A_MIN_VALUE = 0;
-    public static final double ARM_POT_A_MAX_VALUE = 0;
-    public static final double ARM_POT_A_ZERO = 0.0;
-    public static final double ARM_FEED_POS_A = 0.0;
-    public static final double ARM_BACK_PYRAMID_POS = 233;
-    public static final double ARM_FRONT_PYRAMID_POS = 237;
-    public static final double ARM_SIDE_PYRAMID_POS = 237;
-    public static final double ARM_POT_45_A = 0;
-    public static final double POT_A_TO_DEGREES = 45.0 / ARM_POT_45_A;
-    public static final double ARM_KP_A = 0.02;
-    public static final double ARM_KI_A = 0.000021;
-    public static final double ARM_KD_A = 0.0;
-    
-    // Pot B Values
-    public static final int ARM_POT_B_PORT = 0;
-    public static final double ARM_POT_B_MIN_VALUE = 0;
-    public static final double ARM_POT_B_MAX_VALUE = 0;
-    public static final double ARM_POT_B_ZERO = 0.0;
-    public static final double ARM_POT_B_TO_DEGREES = 0.0;
-    public static final double ARM_PYRAMID_POS_B = 0.0;
-    public static final double ARM_FEED_POS_B = 0.0;
-    public static final double ARM_KP_B = 0.0;
-    public static final double ARM_KI_B = 0.0;
-    public static final double ARM_KD_B = 0.0;
-
-    // Camera PID
+    public static final int ARM_POT_PORT = 2;
+    public static final int ARM_POT_MIN_VALUE = 47;
+    public static final int ARM_POT_MAX_VALUE = 700;
+    public static final int ARM_POT_SLOW_VALUE = 330;
+    public static final double ARM_MIN_VOLTAGE = 0.07;
+    // Arm PID
+    public static final double ARM_KP_SMALL = 0.0128;
+    public static final double ARM_KI_SMALL = 0.0000009;
+    public static final double ARM_KD_SMALL = 0.0;
+    public static final double ARM_KP_MED = 0.0157;
+    public static final double ARM_KI_MED = 0.00000001;
+    public static final double ARM_KD_MED = 0.0;
+    public static final double ARM_KP_LARGE = 0.0161;
+    public static final double ARM_KI_LARGE = 0.0;
+    public static final double ARM_KD_LARGE = 0.0;
     public static final double ARM_KP_CAM = 0.0;
     public static final double ARM_KI_CAM = 0.0;
     public static final double ARM_KD_CAM = 0.0;
+    public static final double ARM_MIN_POWER = -0.95;
+    public static final double ARM_MAX_POWER = 0.95;
+    public static final double ARM_PID_POT_MIN = 318;
+    public static final double ARM_PID_POT_MAX = 725;
+
+    /**
+     * 0.015
+     * 1.0 * 10 ^ -6
+     * 0
+     */
     
+    /**
+     * 0.0151
+     * 1.0 * 10 ^ -8
+     * 0
+     */
+    /**
+     * 0.012
+     * 1.0 * 10 ^ -6
+     * 0
+     */
+    //positions
+    public static final double ARM_SHOOTING_POS = 430;
+    public static final double ARM_START_POS = 600; //TODO: get actual value
+
     /*
      * Autonomous
      */
-    public static final double AUTON_DRIVE_POWER = 0.5;
-    public static final double AUTON_INGEST_DRIVE_POWER = 0.5;
+    public static final double AUTON_DRIVE_POWER = 0.3;
     public static final double AUTON_TURN_POWER = 0.5;
-    public static final double AUTON_ARM_LOW_POS = 0;
-    public static final double AUTON_ARM_UNDER_PYRAMID_POS= 0;
+    public static final double AUTON_ARM_POS = ARM_SHOOTING_POS;
     
-    //Fallback Mode
-    //also uses AUTON_DRIVE_POWER and AUTON_TURN_POWER
-    public static final double AUTON_FALLBACK_DRIVE_TIME = 0.0;
-    public static final double AUTON_DRIVE_ANGLE = 0.0;
-    public static final double AUTON_FALLBACK_TURN_TIME = 0.0;
-    public static final double AUTON_TURN_ANGLE = 0.0;
-    public static final double AUTON_FALLBACK_ARM_MOVE_TIME = 0.0;
-    public static final double AUTON_ARM_POS = 0.0;
-    public static final double AUTON_FALLBACK_SHOOT_TIME = 0.0;
-    public static final int AUTON_SHOOT_DISC_NUM = 0;
+    /*
+     * Climber
+     */
+    public static final int CLIMBER_LEFT_SERVO_POS = 1;
+    public static final int CLIMBER_RIGHT_SERVO_POS = 2;
+    public static final double CLIMBER_LEFT_OUT_POS = 1.0;
+    public static final double CLIMBER_RIGHT_OUT_POS = 1.0;
+    public static final double CLIMBER_LEFT_IN_POS = 0.0;
+    public static final double CLIMBER_RIGHT_IN_POS = 0.0;
     
     /*
      * Conveyors
@@ -96,12 +106,9 @@ public class Constants {
     public static final int DT_JAG_RIGHT_MID_POS = 8; // right drive 2
     public static final int DT_JAG_RIGHT_BACK_POS = 9; //right drive 3
     public static final int DT_JAG_CLIMB_POS = 14;
-
-    //servo
     public static final int DT_SERVO_POS = 1;
     public static final int DT_CLIMB_POS = 180;
     public static final int DT_DRIVE_POS = 0;
-    
     
     //Drive Straight
     public static final double DT_STRAIGHT_LEFT_INC = 0.0;
@@ -119,6 +126,19 @@ public class Constants {
     public static final double DT_PID_K_D = 0.0;
     
     /*
+     * FrisbeeTracker
+     */
+    //Positions
+    public static final int INGEST_SWITCH_POS = 0;
+    public static final int SHOOT_SWITCH_POS = 0;
+    public static final int LIFT_SWITCH_POS = 0;
+    
+    //Timers
+    public static final double INGEST_FRISBEE_TIMER = 0.0;
+    public static final double LIFT_FRISBEE_TIMER = 0.0;
+    public static final double SHOOT_FRISBEE_TIMER = 0.0;
+    
+    /*
      * Ingestor
      */
     public static final int INGEST_RELAY_POS = 0;
@@ -131,15 +151,17 @@ public class Constants {
     public static final double LIFTER_DOWN_POWER = 0.8;
     public static final double LIFTER_UP_TIME = 2;
     public static final double LIFTER_DOWN_TIME = 1.6;
-    public static final double LIFTER_TOP_PROX_SENSOR_POWER_POS = 0;
-    public static final double LIFTER_TOP_PROX_SENSOR_POS = 0;
+    public static final int LIFTER_TOP_PROX_DIGITAL_PORT = 2;
+    public static final int LIFTER_TOP_PROX_SOLENOID_PORT = 2;
+    public static final int LIFTER_BOTTOM_PROX_DIGITAL_PORT = 1;
+    public static final int LIFTER_BOTTOM_PROX_SOLENOID_PORT = 1;
         
     /*
      * Shooter
      */ 
-    public static final int SHOOTER_JAG1_POS = 1;
-    public static final int SHOOTER_JAG2_POS = 3;
-    public static final int SHOOTER_JAG3_POS = 2;
+    public static final int SHOOTER_JAG1_POS = 2;
+    public static final int SHOOTER_JAG2_POS = 1;
+    public static final int SHOOTER_JAG3_POS = 3;
 
     public static final double SHOOTER_MAX_POWER = 1.0;
     public static final double SHOOTER_FEED_POWER = 0.22;
@@ -147,6 +169,16 @@ public class Constants {
     public static final double TIME_TO_SHOOT_TWO = 0.0;
     public static final double TIME_TO_SHOOT_THREE = 0.0;
     public static final double TIME_TO_SHOOT_FOUR = 0.0;
+    public static final double SHOOTER_FULL_BATTERY_VOLTAGE = 14.0;
+    public static final double SHOOTER_VOLTAGE_TOLERANCE = 0.0;
+    public static final double SHOOTER_READY_CURRENT_MAX = 0.0;
+    public static final double SHOOTER_READY_CURRENT_MIN = 0.0; 
+    //GOOD SHOOTING ANGLE: 247
+    
+    /*
+     * StopWatch
+     */
+    public static final double MICRO_TO_BASE = 0.0;
     
     /*
      * XboxController
@@ -157,5 +189,5 @@ public class Constants {
     
     //Manipulator
     public static final int XBOX_MANIP_PORT = 2;
-    public static final double XBOX_MANIP_DRIFT = 0.3;
+    public static final double XBOX_MANIP_DRIFT = 0.15;
 }
